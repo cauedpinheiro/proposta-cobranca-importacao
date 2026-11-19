@@ -1,0 +1,1925 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Ficha única da operação · Cobrança de Importação · Banco Rendimento · exemplo ilustrativo</title>
+<style>
+/* Protótipo da ficha única da operação · Banco Rendimento
+   Tom de ferramenta de trabalho: densidade, leitura e um acento só. O marinho do banco marca valor,
+   ação e o que está selecionado; o turquesa é fundo de botão principal; o lilás marca o que o modelo
+   de linguagem leu; o turquesa escuro marca o que a regra fixa conferiu; o coral marca a correção do
+   analista. Turquesa, ciano, lilás e coral claros nunca são cor de texto em fundo claro. */
+
+:root {
+  --papel: #F4F5F6; --papel-2: #E9ECEF; --branco: #FFFFFF;
+  --tinta: #172128; --tinta-2: #46535C; --tinta-3: #5C6B75;
+  --traco: #D3D9DD; --traco-forte: #A5B2BA;
+  --rdm: #0A1D6F; --rdm-medio: #24388F; --rdm-fundo: #E7EAF5;
+  --turquesa: #00CFD9; --turquesa-forte: #00B3BC; --turquesa-escuro: #00666D; --turquesa-f: #E0F7F8;
+  --ciano: #57FFFF;
+  --lilas: #B986EB; --lilas-escuro: #5B3594; --lilas-f: #F3ECFC;
+  --coral: #FE8B60; --coral-escuro: #9A3B12; --coral-f: #FFF0E8;
+  --ok: #1B6E47; --ok-f: #E5F2EB;
+  --atencao: #7A570C; --atencao-f: #FCF3DC;
+  --alerta: #A34A00; --alerta-f: #FBEFE3;
+  --scan: #F8F6F0; --scan-imagem: #EAE6DB; --scan-tinta: #2A2A2A; --realce: #BDF2F5;
+  --f-texto: "Inter", "Segoe UI", Roboto, Arial, sans-serif;
+  --f-disp: "Inter", "Segoe UI", Roboto, Arial, sans-serif;
+  --f-mono: "Cascadia Mono", "Cascadia Code", Consolas, "Liberation Mono", monospace;
+  --f-doc: Georgia, "Times New Roman", serif;
+  --largura: 1480px;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--papel); color: var(--tinta); font: 14px/1.5 var(--f-texto); }
+h1, h2, h3, h4 { font-family: var(--f-disp); color: var(--tinta); line-height: 1.25; }
+h1 { font-size: 22px; font-weight: 600; margin: 4px 0 6px; }
+h2 { font-size: 17px; font-weight: 600; margin: 0 0 8px; }
+h3 { font-size: 14.5px; font-weight: 600; margin: 0; }
+p { margin: 0 0 8px; }
+button, input, select { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--rdm); outline-offset: 2px; }
+.mono { font-family: var(--f-mono); }
+.numero { font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* ---------- Barra superior ---------- */
+.topo { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  background: var(--rdm); color: var(--branco); padding: 10px 24px; }
+.topo-marca { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.topo-logo { display: block; height: 22px; width: auto; }
+.topo-divisor { width: 1px; height: 28px; background: rgba(255, 255, 255, .35); }
+.topo-titulo { display: flex; flex-direction: column; line-height: 1.2; }
+.topo-nome { font-weight: 600; font-size: 15px; color: var(--branco); }
+.topo-processo { font-size: 12px; color: var(--ciano); }
+.topo-controles { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.seletor-modulo { display: flex; gap: 6px; }
+.seletor-modulo button { display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 5px 12px 5px 6px;
+  background: transparent; color: var(--branco); border: 1px solid rgba(255, 255, 255, .45); border-radius: 2px; font-size: 13px; }
+.seletor-modulo button b { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%;
+  border: 1px solid currentColor; font-size: 12px; }
+.seletor-modulo button.incluido { background: var(--rdm-medio); }
+.seletor-modulo button.incluido b { color: var(--ciano); }
+.seletor-modulo button[aria-pressed="true"] { background: var(--turquesa); color: var(--rdm); border-color: var(--turquesa); font-weight: 600; }
+.seletor-modulo button[aria-pressed="true"] b { border-color: var(--rdm); }
+.selo { position: relative; background: var(--atencao-f); color: var(--atencao); font-size: 12px; font-weight: 600;
+  padding: 4px 10px; border-radius: 2px; cursor: help; white-space: nowrap; }
+.selo-dica { display: none; position: absolute; right: 0; top: calc(100% + 8px); z-index: 20; width: 320px; white-space: normal;
+  background: var(--branco); color: var(--tinta); font-weight: 400; font-size: 12.5px; line-height: 1.45; padding: 10px 12px;
+  border: 1px solid var(--traco); border-radius: 4px; box-shadow: 0 6px 20px rgba(10, 29, 111, .18); }
+.selo:hover .selo-dica, .selo:focus .selo-dica, .selo:focus-within .selo-dica { display: block; }
+
+/* ---------- Abas e faixa do módulo ---------- */
+.abas { display: flex; gap: 4px; background: var(--branco); border-bottom: 1px solid var(--traco); padding: 0 24px; overflow-x: auto; }
+.aba { display: flex; align-items: center; gap: 8px; white-space: nowrap; cursor: pointer; background: none; border: 0;
+  border-bottom: 3px solid transparent; padding: 11px 12px 9px; font-size: 14px; color: var(--tinta-2); }
+.aba:hover { color: var(--rdm); }
+.aba.ativa { color: var(--rdm); border-bottom-color: var(--rdm); font-weight: 600; }
+.aba[aria-disabled="true"] { cursor: not-allowed; color: var(--tinta-3); }
+.aba-contagem { font-size: 11.5px; font-weight: 600; background: var(--rdm-fundo); color: var(--rdm); padding: 1px 7px; border-radius: 999px; }
+.aba-indicacao { font-size: 11.5px; color: var(--tinta-3); font-weight: 400; }
+.faixa-modulo { background: var(--rdm-fundo); color: var(--rdm); padding: 7px 24px; font-size: 13px; border-bottom: 1px solid var(--traco); }
+
+main { max-width: var(--largura); margin: 0 auto; padding: 20px 24px 40px; outline: none; }
+.rodape { max-width: var(--largura); margin: 0 auto; padding: 14px 24px 28px; font-size: 12px; color: var(--tinta-3); border-top: 1px solid var(--traco); }
+.selo-texto { display: inline-block; background: var(--atencao-f); color: var(--atencao); font-weight: 600; padding: 1px 8px; border-radius: 2px; margin-right: 8px; }
+.aviso-copia { position: fixed; right: 24px; bottom: 24px; z-index: 30; background: var(--rdm); color: var(--branco); padding: 10px 16px;
+  border-radius: 4px; font-size: 13px; opacity: 0; transform: translateY(8px); transition: opacity .18s, transform .18s; pointer-events: none; }
+.aviso-copia.visivel { opacity: 1; transform: none; }
+
+/* ---------- Peças comuns ---------- */
+.cabecalho-tela { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin-bottom: 14px; }
+.rotulo-secao { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; color: var(--tinta-3); margin: 0; }
+.texto-apoio { color: var(--tinta-2); max-width: 78ch; }
+.legenda { font-size: 12px; color: var(--tinta-3); margin: 6px 0 0; }
+.titulo-bloco { font-size: 14px; font-weight: 600; margin: 18px 0 8px; }
+.titulo-secao { font-size: 17px; margin: 26px 0 10px; }
+.cartao { background: var(--branco); border: 1px solid var(--traco); border-radius: 4px; }
+.rolagem-tabela, .rolagem-grafico { overflow-x: auto; }
+.filtros { display: flex; gap: 6px; flex-wrap: wrap; }
+.filtro { cursor: pointer; background: var(--branco); border: 1px solid var(--traco-forte); border-radius: 999px; padding: 4px 12px; font-size: 13px; color: var(--tinta-2); }
+.filtro:hover { border-color: var(--rdm); color: var(--rdm); }
+.filtro[aria-pressed="true"] { background: var(--rdm); border-color: var(--rdm); color: var(--branco); }
+.filtro-n { font-variant-numeric: tabular-nums; font-weight: 600; margin-left: 2px; }
+
+.tabela { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.tabela th { text-align: left; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--tinta-3);
+  padding: 10px 12px; border-bottom: 1px solid var(--traco); white-space: nowrap; background: var(--branco); }
+.tabela td { padding: 10px 12px; border-bottom: 1px solid var(--traco); vertical-align: middle; }
+.tabela tbody tr:last-child td { border-bottom: 0; }
+.tabela tbody tr[data-acao] { cursor: pointer; }
+.tabela tbody tr[data-acao]:hover, .tabela tbody tr[data-acao]:focus-visible { background: var(--rdm-fundo); }
+.tabela-fila td:first-child { font-weight: 600; color: var(--rdm); }
+.prazo-tag { display: inline-block; font-family: var(--f-mono); font-size: 11px; font-weight: 700; color: var(--rdm);
+  border: 1px solid var(--rdm); border-radius: 2px; padding: 0 5px; margin-right: 4px; }
+.nota-ok { color: var(--ok); font-size: 12px; font-weight: 600; white-space: nowrap; }
+.nota-alerta { color: var(--alerta); font-size: 12px; font-weight: 600; white-space: nowrap; }
+.celula-origem { color: var(--tinta-2); font-size: 12.5px; }
+.situacao { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; font-size: 12px; font-weight: 600; padding: 2px 9px; border-radius: 999px; }
+.sit-novo { background: var(--rdm-fundo); color: var(--rdm); }
+.sit-lido { background: var(--atencao-f); color: var(--atencao); }
+.sit-divergencia { background: var(--alerta-f); color: var(--alerta); }
+.sit-aprovado { background: var(--ok-f); color: var(--ok); }
+.vazio, .vazio-celula { color: var(--tinta-3); font-style: italic; }
+.observacao { display: block; font-size: 12px; color: var(--tinta-3); }
+.sinal-ok { color: var(--ok); font-weight: 700; }
+.sinal-alerta { color: var(--alerta); font-weight: 700; }
+
+.botao { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; font-size: 13.5px; font-weight: 600; padding: 8px 14px;
+  border-radius: 2px; border: 1px solid transparent; white-space: nowrap; }
+.botao-principal { background: var(--turquesa); color: var(--rdm); border-color: var(--turquesa); }
+.botao-principal:hover { background: var(--turquesa-forte); border-color: var(--turquesa-forte); }
+.botao-secundario { background: var(--branco); color: var(--rdm); border-color: var(--rdm); }
+.botao-secundario:hover { background: var(--rdm-fundo); }
+.botao:disabled { background: var(--papel-2); color: var(--tinta-3); border-color: var(--traco); cursor: not-allowed; }
+.botao-link { background: none; border: 0; padding: 0; cursor: pointer; color: var(--rdm); text-decoration: underline; font-size: 13px; }
+.botao-copiar { cursor: pointer; background: var(--branco); color: var(--rdm); border: 1px solid var(--rdm); border-radius: 2px; padding: 3px 10px; font-size: 12px; font-weight: 600; }
+.botao-copiar:hover, .botao-copiar-mini:hover { background: var(--rdm-fundo); }
+.botao-copiar-mini { cursor: pointer; background: var(--branco); color: var(--rdm); border: 1px solid var(--traco-forte); border-radius: 2px; padding: 1px 7px; font-size: 11px; }
+.linha-acao { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+
+.etiqueta { display: inline-block; font-family: var(--f-mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: .04em;
+  padding: 2px 6px; border-radius: 2px; white-space: nowrap; }
+.etiqueta-regra { background: var(--turquesa-f); color: var(--turquesa-escuro); }
+.etiqueta-modelo { background: var(--lilas-f); color: var(--lilas-escuro); }
+.etiqueta-ilustrativa { display: inline-block; background: var(--atencao-f); color: var(--atencao); font-size: 12px; padding: 3px 8px; border-radius: 2px; margin: 0 0 8px; }
+.etiqueta-modulo { display: inline-block; background: var(--rdm-fundo); color: var(--rdm); font-size: 11px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .06em; padding: 2px 8px; border-radius: 2px; margin-bottom: 6px; }
+.etiqueta-m2 { display: inline-block; background: var(--rdm); color: var(--branco); font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 2px; }
+
+.aviso { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap;
+  border-left: 4px solid; border-radius: 2px; padding: 10px 14px; margin: 12px 0; }
+.aviso p { margin: 0; max-width: 90ch; }
+.aviso-neutro { background: var(--rdm-fundo); border-color: var(--rdm); color: var(--tinta); }
+.aviso-atencao { background: var(--atencao-f); border-color: var(--atencao); color: var(--tinta); }
+.aviso-ok { background: var(--ok-f); border-color: var(--ok); color: var(--tinta); }
+
+/* ---------- Envelope aberto ---------- */
+.cabecalho-envelope { margin-bottom: 8px; }
+.titulo-envelope { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.titulo-envelope h1 .mono { color: var(--rdm); margin-right: 6px; }
+.meta-envelope { color: var(--tinta-2); font-size: 13px; }
+.passos { list-style: none; display: flex; gap: 8px; flex-wrap: wrap; padding: 0; margin: 12px 0 14px; }
+.passo { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; background: var(--branco); border: 1px solid var(--traco);
+  border-radius: 4px; padding: 7px 12px 7px 8px; font-size: 13.5px; color: var(--tinta-2); }
+.passo:hover { border-color: var(--rdm); }
+.passo[aria-current="step"] { border-color: var(--rdm); background: var(--rdm-fundo); color: var(--rdm); font-weight: 600; }
+.passo-n { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: var(--rdm); color: var(--branco); font-size: 11.5px; font-weight: 600; }
+.passo-nota { font-size: 12px; font-weight: 400; color: var(--tinta-2); }
+
+.envelope-grade { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+.visor { position: sticky; top: 12px; display: flex; flex-direction: column; max-height: calc(100vh - 24px);
+  background: var(--branco); border: 1px solid var(--traco); border-radius: 4px; overflow: hidden; }
+.visor-abas { display: flex; flex-wrap: wrap; gap: 4px; padding: 8px; border-bottom: 1px solid var(--traco); }
+.visor-aba { cursor: pointer; display: inline-flex; align-items: center; gap: 6px; background: var(--branco); border: 1px solid var(--traco);
+  border-radius: 2px; padding: 4px 9px; font-size: 12.5px; color: var(--tinta-2); }
+.visor-aba:hover { border-color: var(--rdm); color: var(--rdm); }
+.visor-aba[aria-selected="true"] { background: var(--rdm); border-color: var(--rdm); color: var(--branco); }
+.visor-aba-paginas { font-size: 11px; opacity: .85; }
+.tag-ocr { font-family: var(--f-mono); font-size: 10px; font-weight: 700; background: var(--lilas-f); color: var(--lilas-escuro); padding: 0 4px; border-radius: 2px; }
+.visor-origem { margin: 0; padding: 8px 12px; font-size: 12.5px; background: var(--papel); border-bottom: 1px solid var(--traco); color: var(--tinta-2); }
+.origem-rotulo { font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--tinta-3); margin-right: 4px; }
+.visor-origem strong { color: var(--rdm); }
+.visor-paginas { overflow: auto; padding: 18px; background: var(--papel-2); display: flex; flex-direction: column; gap: 18px; min-height: 360px; }
+
+.pagina { background: var(--scan); color: var(--scan-tinta); font: 13px/1.55 var(--f-doc); padding: 18px 30px 30px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .16), 0 6px 18px rgba(0, 0, 0, .06); min-height: 440px; }
+.pagina-imagem { background-color: var(--scan-imagem);
+  background-image: repeating-linear-gradient(0deg, rgba(0, 0, 0, .022) 0 1px, transparent 1px 3px); transform: rotate(-.35deg); }
+.pagina-rotulo { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; font: 11px/1.4 var(--f-texto); color: var(--tinta-2);
+  border-bottom: 1px dashed var(--traco-forte); padding-bottom: 6px; margin: 0 -12px 16px; }
+.tag-ocr-longa { color: var(--lilas-escuro); font-weight: 600; }
+.tag-texto { color: var(--tinta-3); }
+.doc-topo { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; font-size: 11px; letter-spacing: .05em; text-transform: uppercase; }
+.doc-emissor { font-weight: 700; }
+.doc-titulo { font-family: var(--f-doc); color: var(--scan-tinta); font-size: 16px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; margin: 16px 0 10px; }
+.doc-linha { margin: 3px 0; }
+.doc-secao { margin: 14px 0 4px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
+.doc-destaque { font-weight: 700; margin-top: 8px; }
+.doc-texto-livre { font-style: italic; }
+.doc-tabela { border-collapse: collapse; font-size: 12px; margin: 10px 0; width: 100%; }
+.doc-tabela th, .doc-tabela td { border: 1px solid #8C8A84; padding: 3px 6px; text-align: left; }
+.doc-cabecalho-pagina { font-size: 11px; color: var(--tinta-3); margin: 0 0 6px; }
+.doc-assinatura { margin-top: 26px; width: 190px; border-top: 1px solid #77756F; padding-top: 4px; font-size: 11px; }
+.doc-rubrica { display: inline-block; margin-top: 20px; border: 2px solid #3D4F8A; color: #3D4F8A; font: 700 12px var(--f-texto);
+  text-transform: uppercase; letter-spacing: .08em; padding: 4px 10px; transform: rotate(-6deg); }
+
+.trecho { cursor: pointer; border-radius: 2px; border-bottom: 1px dotted transparent; transition: background .15s; }
+.trecho:hover { background: rgba(0, 207, 217, .16); border-bottom-color: var(--turquesa-escuro); }
+.trecho.trecho-divergente { background: var(--alerta-f); border-bottom: 2px solid var(--alerta); }
+.trecho.realce { background: var(--realce); outline: 2px solid var(--turquesa-escuro); outline-offset: 1px; }
+
+.painel-ficha { background: var(--branco); border: 1px solid var(--traco); border-radius: 4px; padding: 16px 18px 18px; min-width: 0; }
+.painel-topo { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.legenda-origem { list-style: none; display: flex; flex-wrap: wrap; gap: 6px 16px; padding: 0; margin: 4px 0 8px; font-size: 12px; color: var(--tinta-2); }
+.amostra { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+.amostra-modelo { background: var(--lilas); }
+.amostra-regra { background: var(--turquesa); }
+.amostra-analista { background: var(--coral); }
+.amostra-barra { background: var(--rdm); }
+.amostra-barra-vencida { background: var(--alerta); }
+
+.grupo-change { border: 1px solid var(--traco); border-radius: 4px; padding: 6px 10px 10px; margin: 12px 0 0; min-width: 0; }
+.grupo-change legend { padding: 0 6px; font-weight: 600; font-size: 14px; }
+.grupo-change legend .rotulo-secao { display: inline; margin-right: 6px; }
+.campo { display: grid; grid-template-columns: minmax(140px, .9fr) minmax(150px, 1.2fr) 196px; gap: 10px; align-items: center;
+  padding: 6px 8px; border-left: 3px solid transparent; border-radius: 2px; }
+.campo.ativo { background: var(--rdm-fundo); border-left-color: var(--rdm); }
+.campo.campo-divergente { border-left-color: var(--alerta); }
+.campo-cabeca { display: flex; flex-direction: column; align-items: flex-start; text-align: left; background: none; border: 0; padding: 0; cursor: pointer; min-width: 0; }
+.campo-rotulo { font-size: 13px; font-weight: 600; color: var(--rdm); }
+.campo-cabeca:hover .campo-rotulo { text-decoration: underline; text-decoration-style: dotted; }
+.campo-fonte { font-size: 11.5px; color: var(--tinta-3); }
+.campo-entrada { width: 100%; min-width: 0; font-family: var(--f-mono); font-size: 13px; padding: 6px 8px; border: 1px solid var(--traco-forte);
+  border-radius: 2px; background: var(--branco); color: var(--tinta); }
+.campo-entrada:focus { outline: 2px solid var(--rdm); outline-offset: 0; border-color: var(--rdm); }
+.campo-entrada[readonly] { background: var(--papel); }
+.campo-marca { white-space: nowrap; }
+.marca { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 2px; }
+.marca-alerta { background: var(--alerta-f); color: var(--alerta); }
+.marca-modelo { background: var(--lilas-f); color: var(--lilas-escuro); }
+.marca-analista { background: var(--coral-f); color: var(--coral-escuro); }
+.marca-ok { background: var(--ok-f); color: var(--ok); }
+.marca-regra { background: var(--turquesa-f); color: var(--turquesa-escuro); }
+.marca-lido { background: var(--papel-2); color: var(--tinta-2); }
+
+/* Divergências e instrução */
+.regras { background: var(--papel); border: 1px solid var(--traco); border-radius: 4px; padding: 8px 12px; margin: 10px 0; }
+.regras summary { cursor: pointer; font-weight: 600; font-size: 13.5px; }
+.lista-regras { list-style: none; padding: 0; margin: 8px 0 2px; }
+.lista-regras li { display: flex; gap: 8px; padding: 3px 0; font-size: 13px; }
+.regra-sinal { width: 14px; flex: none; font-weight: 700; }
+.regra-confere .regra-sinal { color: var(--ok); }
+.regra-diverge .regra-sinal { color: var(--alerta); }
+.cartao-divergencia, .cartao-instrucao { background: var(--branco); border: 1px solid var(--traco); border-left: 4px solid var(--alerta);
+  border-radius: 4px; padding: 12px 14px; margin: 12px 0; }
+.cartao-instrucao { border-left-color: var(--lilas-escuro); }
+.cartao-divergencia.resolvida, .cartao-instrucao.confirmada { border-left-color: var(--ok); }
+.divergencia-topo { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.divergencia-topo h3 { flex: 1; min-width: 180px; }
+.divergencia-estado { font-size: 12px; font-weight: 600; color: var(--alerta); white-space: nowrap; }
+.resolvida .divergencia-estado, .confirmada .divergencia-estado { color: var(--ok); }
+.lados { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 0 8px; }
+.lado { display: flex; flex-direction: column; gap: 4px; text-align: left; cursor: pointer; background: var(--papel); border: 1px solid var(--traco);
+  border-radius: 4px; padding: 8px 10px; min-width: 0; }
+.lado:hover { border-color: var(--rdm); }
+.lado-largo { width: 100%; margin: 10px 0 8px; }
+.lado-doc { font-size: 11.5px; font-weight: 600; color: var(--tinta-3); }
+.lado-trecho { font: 13px/1.5 var(--f-doc); color: var(--scan-tinta); overflow-wrap: anywhere; }
+.lado-trecho mark { background: var(--alerta-f); color: var(--alerta); font-weight: 700; padding: 0 2px; border-radius: 2px; }
+.texto-livre { font-style: italic; }
+.divergencia-leitura { font-size: 13px; color: var(--tinta-2); }
+.opcoes { border: 0; padding: 0; margin: 6px 0 8px; min-width: 0; }
+.opcoes legend { font-size: 12px; font-weight: 600; color: var(--tinta-2); padding: 0; margin-bottom: 4px; }
+.opcao { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; padding: 3px 0; font-size: 13.5px; cursor: pointer; }
+.entrada-correcao { font-family: var(--f-mono); font-size: 13px; padding: 4px 6px; border: 1px solid var(--traco-forte); border-radius: 2px; width: 170px; }
+.erro-escolha { color: var(--alerta); font-size: 12.5px; font-weight: 600; }
+.resolucao { font-size: 13.5px; }
+.interpretacao { display: grid; gap: 4px; margin: 6px 0; }
+.interpretacao div { display: grid; grid-template-columns: 170px 1fr; gap: 8px; }
+.interpretacao dt { font-size: 12.5px; color: var(--tinta-3); }
+.interpretacao dd { margin: 0; font-weight: 600; }
+.rotulo-select { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; }
+.rotulo-select select, .formulario select, .formulario input { padding: 6px 8px; border: 1px solid var(--traco-forte); border-radius: 2px; background: var(--branco); font-size: 13px; }
+
+/* Aprovação e ficha aprovada */
+.cartao-aprovar { background: var(--papel); border: 1px solid var(--traco); border-radius: 4px; padding: 12px 14px; margin-top: 8px; }
+.pendencias { list-style: none; padding: 0; margin: 0 0 4px; }
+.pendencias li { padding: 2px 0; }
+.sem-pendencia { font-weight: 600; }
+.resumo-ficha { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.resumo-aba { border: 1px solid var(--traco); border-radius: 4px; padding: 8px 10px; min-width: 0; }
+.resumo-aba dl { margin: 6px 0 0; }
+.par { display: grid; grid-template-columns: minmax(0, 1fr); padding: 3px 0; border-bottom: 1px dotted var(--traco); }
+.par:last-child { border-bottom: 0; }
+.par dt { font-size: 11.5px; color: var(--tinta-3); }
+.par dd { margin: 0; font-size: 13px; overflow-wrap: anywhere; }
+.faixa-aprovada { background: var(--ok-f); color: var(--ok); font-weight: 600; padding: 10px 14px; border-radius: 4px; margin-bottom: 12px; }
+.cartao-saida { background: var(--branco); border: 1px solid var(--traco); border-radius: 4px; padding: 12px 14px; margin: 12px 0; }
+.saida-topo { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+.aba-change { border-top: 1px solid var(--traco); padding: 8px 0 4px; }
+.aba-change-topo { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-weight: 600; margin-bottom: 4px; }
+.aba-change-topo .rotulo-secao { display: inline; margin-right: 6px; }
+.aba-change dl { margin: 0; }
+.aba-change .par { grid-template-columns: 190px minmax(0, 1fr) auto; align-items: center; gap: 8px; }
+.aba-change .par dt { font-size: 12.5px; }
+.texto-gerado { font: 12.5px/1.55 var(--f-mono); background: var(--papel); color: var(--tinta); border: 1px solid var(--traco); border-radius: 4px;
+  padding: 12px 14px; margin: 6px 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.texto-swift { background: var(--rdm-fundo); color: var(--rdm); }
+.bloco-indisponivel { border: 1px dashed var(--traco-forte); background: var(--papel); border-radius: 4px; padding: 12px 14px; margin: 12px 0; color: var(--tinta-2); }
+.bloco-indisponivel p { margin: 0; }
+.acomp-ficha { margin: 4px 0 8px; display: grid; gap: 4px; }
+.acomp-ficha div { display: grid; grid-template-columns: 160px 1fr; gap: 8px; align-items: center; }
+.acomp-ficha dt { font-size: 12.5px; color: var(--tinta-3); }
+.acomp-ficha dd { margin: 0; }
+.registro { list-style: none; padding: 0; margin: 0; }
+.registro li { padding: 5px 0; border-bottom: 1px dotted var(--traco); font-size: 13px; }
+.registro li:last-child { border-bottom: 0; }
+.registro .mono { color: var(--tinta-2); margin-right: 8px; font-size: 12px; }
+
+/* ---------- Acompanhamento (Módulo 2) ---------- */
+.acomp-grade { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; align-items: start; }
+.acomp-lateral { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; align-items: start; }
+.tabela-acomp td.mono, .tabela-acomp td.numero { white-space: nowrap; }
+.tabela-acomp { min-width: 1080px; }
+.bloco-lateral { padding: 12px 14px; }
+.bloco-lateral .titulo-bloco { margin-top: 0; }
+.formulario { display: flex; flex-direction: column; gap: 10px; }
+.formulario label { display: flex; flex-direction: column; gap: 4px; font-size: 12.5px; font-weight: 600; color: var(--tinta-2); }
+.formulario .botao { align-self: flex-start; }
+.resumo-diario { background: var(--papel); border: 1px solid var(--traco); border-radius: 4px; padding: 10px 12px; font-size: 13px; }
+.resumo-cabecalho { display: flex; justify-content: space-between; gap: 8px; font-size: 11.5px; color: var(--tinta-3); margin: 0 0 6px; }
+.resumo-assunto { font-weight: 600; margin: 0 0 6px; }
+.resumo-diario ul { margin: 0; padding-left: 18px; }
+.resumo-diario li { padding: 2px 0; }
+.resumo-diario li.tem-pendencia { font-weight: 600; }
+.indicadores { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.indicador { background: var(--branco); border: 1px solid var(--traco); border-radius: 4px; padding: 12px 14px; }
+.indicador-principal { border-left: 4px solid var(--rdm); }
+.indicador-numero { font-family: var(--f-disp); font-size: 28px; font-weight: 600; color: var(--rdm); margin: 4px 0 2px; font-variant-numeric: tabular-nums; }
+.bloco-grafico { padding: 12px 14px; margin-top: 12px; }
+.bloco-grafico .titulo-bloco { margin-top: 0; }
+.legenda-grafico { list-style: none; display: flex; flex-wrap: wrap; gap: 6px 18px; padding: 0; margin: 0 0 8px; font-size: 12px; color: var(--tinta-2); }
+.grafico { display: block; }
+.grafico-rotulo { font: 11px var(--f-mono); fill: var(--tinta-2); }
+.grafico-valor { font: 600 11px var(--f-texto); fill: var(--tinta); }
+.barra { fill: var(--rdm); }
+.barra-vencida { fill: var(--alerta); }
+.tela-indisponivel { background: var(--branco); border: 1px solid var(--traco); border-radius: 4px; padding: 36px 24px; text-align: center; max-width: 720px; margin: 24px auto; }
+.tela-indisponivel .texto-apoio { margin: 8px auto 16px; }
+
+/* ---------- Telas estreitas ---------- */
+@media (max-width: 1100px) {
+  .envelope-grade, .acomp-grade { grid-template-columns: minmax(0, 1fr); }
+  .visor { position: static; max-height: none; }
+  .visor-paginas { max-height: 70vh; }
+  .resumo-ficha { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 700px) {
+  .topo { padding: 10px 14px; }
+  .topo-divisor { display: none; }
+  .seletor-nome { display: none; }
+  .seletor-modulo button { padding: 5px 8px 5px 6px; }
+  .abas { padding: 0 8px; }
+  .faixa-modulo { padding: 7px 14px; }
+  main { padding: 14px 12px 32px; }
+  .rodape { padding: 12px 14px 24px; }
+  .campo { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+  .lados, .indicadores, .acomp-lateral { grid-template-columns: minmax(0, 1fr); }
+  .interpretacao div, .acomp-ficha div { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .aba-change .par { grid-template-columns: minmax(0, 1fr) auto; }
+  .aba-change .par dt { grid-column: 1 / -1; }
+  .pagina { padding: 14px 16px 22px; min-height: 0; }
+  .selo-dica { width: 260px; }
+}
+
+</style>
+</head>
+<body>
+<header class="topo">
+  <div class="topo-marca">
+    <img class="topo-logo" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAyNy4wLjEsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iQ2FtYWRhXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4Ig0KCSB2aWV3Qm94PSIwIDAgMTY5Mi4yOCAyMzUuNzYiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDE2OTIuMjggMjM1Ljc2OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+DQo8c3R5bGUgdHlwZT0idGV4dC9jc3MiPg0KCS5zdDB7ZmlsbDojRkZGRkZGO30NCgkuc3Qxe2ZpbGw6dXJsKCNTVkdJRF8xXyk7fQ0KPC9zdHlsZT4NCjxnPg0KCTxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik03MDkuNTQsNDcuOTRjNC40NywzLjk5LDEwLjQsNS45OCwxNy43OCw1Ljk4YzUuNjEsMCwxMC44Mi0xLjE1LDE1LjY1LTMuNDZjNC44MS0yLjI5LDguODYtNS40NywxMi4xMy05LjU1DQoJCWMzLjI3LTQuMDUsNS4zNi04LjczLDYuMjgtMTQuMDFjMC4yNS0xLjY4LDAuMzgtMy4yMiwwLjM4LTQuNjVjMC00LjI4LTEuMDMtOC4wOS0zLjA5LTExLjQ0Yy0yLjA1LTMuMzUtNC45OC01Ljk4LTguOC03LjkxDQoJCUM3NDYuMDYsMC45Niw3NDEuNjksMCw3MzYuNzQsMGMtNS41MywwLTEwLjY5LDEuMTctMTUuNDYsMy41MmMtNC43OCwyLjM0LTguNzUsNS41Ni0xMS45Myw5LjYyYy0zLjE5LDQuMDYtNS4yLDguNjUtNi4wNCwxMy43NQ0KCQljLTAuMzMsMS41OS0wLjUsMy4zNS0wLjUsNS4yOEM3MDIuODEsMzguNzEsNzA1LjA0LDQzLjk3LDcwOS41NCw0Ny45NCIvPg0KCTxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik0xNjQuODgsMTkuMjNjLTEwLjg5LTMuMjctMjQuMzgtNC45LTQwLjQ3LTQuOUgzMS44bC0wLjI1LDEuODlsNy43OSwzMC40MUwxOC44NSwxNjIuODdsLTE4LjYsMzAuNDJMMCwxOTUuMTYNCgkJaDg0LjMzbDAuMjUtMS44OGwtNy42Ny0zMC40MkwxMDEuNjcsMjIuNWgzLjAyYzExLjMxLDAsMTkuMzksMi4xOCwyNC4yNiw2LjUzYzQuODYsNC4zNiw3LjI5LDEwLjg5LDcuMjksMTkuNg0KCQljMCwzLjk0LTAuNDYsOC40Ni0xLjM4LDEzLjU4Yy0yLjI2LDEzLjA3LTYuNCwyMy41Ny0xMi4zNywzMS40OGMtNiw3LjkzLTE0LjIzLDExLjg4LTI0LjcsMTEuODhoLTMuNjVsLTAuMjUsMS4zOGwxLjI2LDUuMDINCgkJbDIzLjEyLDgzLjE5aDc3LjA0bDAuMjUtMS43NmwtMTguODUtMjUuMjZsLTI1LjI2LTUyLjg2Yy0xMi4wMywyLjczLTMyLjY2LDEuOC00MC44NiwwLjA5bDAuMTctMy4yOQ0KCQljMjEuMDctMS4zMiw0Ni40OS03LjMsNjAuNjEtMTUuNGMxNC4xMi04LjA3LDIyLjU2LTE5Ljk1LDI1LjMzLTM1LjYyYzAuNDItMi42OCwwLjYzLTUuMDMsMC42My03LjA0YzAtOC4xMy0yLjY4LTE1LjE1LTguMDQtMjEuMDQNCgkJQzE4My45LDI3LjA4LDE3NS43NywyMi41LDE2NC44OCwxOS4yMyIvPg0KCTxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik0xNTExLjM3LDE0Ni45MWMtMy41NywxNC40OS03Ljk0LDI1Ljc2LTEzLjE0LDMzLjgxYy01LjE5LDguMDQtMTAuMDUsMTIuMDYtMTQuNTgsMTIuMDYNCgkJYy0zLjY5LDAtNi40NS0yLjA1LTguMy02LjE2Yy0xLjg0LTQuMS0yLjc2LTkuOTMtMi43Ni0xNy40N2MwLTIwLjEsMS43My0zNy43OCw1LjIxLTUzLjAzYzMuNDgtMTUuMjUsNy43OC0yNi45OCwxMi44OS0zNS4xOQ0KCQljNS4xMS04LjIxLDkuOTctMTIuMzIsMTQuNTgtMTIuMzJjMy45NCwwLDYuODMsMi4yNSw4LjY3LDYuNzJjMS44NCw0LjUsMi43NiwxMS45NiwyLjc2LDIyLjQ0DQoJCUMxNTE2LjcsMTE2LjAzLDE1MTQuOTEsMTMyLjQxLDE1MTEuMzcsMTQ2LjkxIE0xNTY5LjM2LDEyMS4wMmMwLTEwLjk4LTIuNjQtMjAuODYtNy45Mi0yOS42NmMtNS4yNy04LjgtMTIuNjktMTUuNjgtMjIuMjQtMjAuNjYNCgkJYy05LjU1LTQuOTktMjAuNTMtNy40OS0zMi45My03LjQ5Yy0xNS4yNSwwLTI5LjUyLDMuNDQtNDIuOCwxMC4zMWMtMTMuMjgsNi44Ny0yMy44OCwxNi4yNC0zMS43OCwyOC4xDQoJCWMtNy45MywxMS44NS0xMS44OCwyNC44MS0xMS44OCwzOC44OGMwLDExLjA2LDIuNjEsMjAuOTgsNy44NiwyOS43M2M1LjIyLDguNzUsMTIuNTksMTUuNiwyMi4xMiwyMC41NA0KCQljOS41LDQuOTQsMjAuNDEsNy40MiwzMi43Myw3LjQyYzE1LjQxLDAsMjkuNzgtMy40MSw0My4xLTEwLjI1YzEzLjMyLTYuODIsMjMuOTUtMTYuMTQsMzEuODUtMjcuOTYNCgkJQzE1NjUuNDEsMTQ4LjE2LDE1NjkuMzYsMTM1LjE4LDE1NjkuMzYsMTIxLjAyIi8+DQoJPHBvbHlnb24gY2xhc3M9InN0MCIgcG9pbnRzPSIxNjgzLjg2LDAuNSAxNTU5LjU3LDIzNS43NiAxNTY3Ljg2LDIzNS43NiAxNjkyLjI4LDAuNSAJIi8+DQoJPHBhdGggY2xhc3M9InN0MCIgZD0iTTI1Ni45NSwxMjMuNzdjMS41OS0xMi4yNCw0LjE3LTI4LjIzLDcuNjQtMzguNDljMy40OC0xMC4yNyw4LjE5LTE1Ljk4LDE0LjA4LTE0Ljk4DQoJCWM2LjkxLDEuMTcsNy41MSwyMC4wNCw2Ljc4LDI2Ljk2QzI4My4yNSwxMTguMTksMjc3LjgzLDEyMy4wMSwyNTYuOTUsMTIzLjc3IE0yNzIuODMsMTI4Ljc3YzIyLjE1LDAsNTguMDYtNy40OCw1OC4wNi0zMi41NQ0KCQljMC0xOS40Ni0xOC4xNS0zMy00OC43NS0zM2MtMTUuNzUsMC0zMC4wMiwzLjUyLTQyLjc5LDEwLjU1Yy0xMi43OCw3LjA0LTIyLjg0LDE2LjctMzAuMTYsMjguOTdjLTcuMzQsMTIuMjgtMTEsMjUuOTUtMTEsNDEuMDQNCgkJYzAsMTAuNjQsMi4xOCwyMC4wNyw2LjU0LDI4LjI3YzQuMzUsOC4yMSwxMC42OSwxNC42MiwxOS4wNSwxOS4yM2M4LjMyLDQuNjEsMTguMzIsNi45MSwyOS45Niw2LjkxYzE0LjgzLDAsMjcuMjMtMy4wNywzNy4yLTkuMjUNCgkJYzkuOTctNi4xNCwxOC43Mi0xNS41MSwyNi4yNi0yOC4wOGwtMS42My0xLjEzYy0zLjUyLDMuMTktNy4yOCw1LjczLTExLjI1LDcuNmMtMy45OCwxLjktOS4yNywyLjg0LTE1Ljg5LDIuODQNCgkJYy0yMS41OCwwLTM0LjU3LTkuMzQtMzIuNDEtNDEuMzlIMjcyLjgzeiIvPg0KCTxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik0xMDg1LjUyLDEyMy43N2MxLjU5LTEyLjI0LDQuMTctMjguMjMsNy42NC0zOC40OWMzLjQ4LTEwLjI3LDguMTktMTUuOTgsMTQuMDktMTQuOTgNCgkJYzYuOTEsMS4xNyw3LjUsMjAuMDQsNi43NywyNi45NkMxMTExLjgyLDExOC4xOSwxMTA2LjQsMTIzLjAxLDEwODUuNTIsMTIzLjc3IE0xMTAxLjQsMTI4Ljc3YzIyLjE1LDAsNTguMDYtNy40OCw1OC4wNi0zMi41NQ0KCQljMC0xOS40Ni0xOC4xNS0zMy00OC43NS0zM2MtMTUuNzUsMC0zMC4wMiwzLjUyLTQyLjc5LDEwLjU1Yy0xMi43OCw3LjA0LTIyLjg0LDE2LjctMzAuMTYsMjguOTcNCgkJYy03LjM0LDEyLjI4LTExLjAxLDI1Ljk1LTExLjAxLDQxLjA0YzAsMTAuNjQsMi4xOCwyMC4wNyw2LjUzLDI4LjI3YzQuMzYsOC4yMSwxMC43LDE0LjYyLDE5LjA1LDE5LjIzDQoJCWM4LjMyLDQuNjEsMTguMzIsNi45MSwyOS45Niw2LjkxYzE0LjgzLDAsMjcuMjMtMy4wNywzNy4yLTkuMjVjOS45Ny02LjE0LDE4LjcyLTE1LjUxLDI2LjI2LTI4LjA4bC0xLjYzLTEuMTMNCgkJYy0zLjUyLDMuMTktNy4yOCw1LjczLTExLjI1LDcuNmMtMy45OCwxLjktOS4yNywyLjg0LTE1Ljg5LDIuODRjLTIxLjU4LDAtMzQuNTctOS4zNC0zMi40MS00MS4zOUgxMTAxLjR6Ii8+DQoJPHBhdGggY2xhc3M9InN0MCIgZD0iTTQ5My4zOSwxNzcuMDljLTEuNzQsMC43Mi00Ljg2LDEuMzktNi4wMywxLjRjLTIuOTcsMC4wMi00LjMyLTQuMS00LjA2LTguMmMwLjEzLTIuMDcsMC40NS00LjYxLDAuNzktNi4yOA0KCQlsMTAuMTgtNTYuNDJjMS4xNy02Ljg3LDEuNzYtMTIuNjUsMS43Ni0xNy4zNWMwLTkuOC0yLjE2LTE2Ljc1LTYuNDYtMjAuODZjLTQuMzMtNC4xMS0xMC42My02LjE2LTE4LjkyLTYuMTYNCgkJYy0xMi41NywwLTI0LjI2LDQuMzItMzUuMDcsMTIuOTRjLTEwLjgxLDguNjMtMjAuNCwyMC42NS0yOC43NywzNi4wN2gtMC44OWw1LjkxLTI2LjUybDUuMTYtMjEuMTFsLTEuMDEtMS4zOGwtNjguNjIsMTMuNDUNCgkJbC0wLjI1LDEuNjRsOS42NywxNi44NGwtMTcuOTcsMTAxLjI5bDU1LjU1LTIuNTFsMTEuMTgtNjcuMTFjMS44NS01LjM2LDQuOTItMTEuNDEsOS4yMy0xOC4xNmM0LjMyLTYuNzQsOC42OS0xMi41MSwxMy4wNy0xNy4yOQ0KCQljNC40MS00Ljc4LDcuNzMtNy4xNiwxMC03LjE2YzEuNDIsMCwyLjQ2LDAuNDksMy4wNywxLjQ0YzAuNjQsMC45OCwwLjk1LDIuNDIsMC45NSw0LjM0YzAsMi4wOS0wLjQyLDUuMzItMS4yNiw5LjY3bC0xMS42OCw2NC4yMg0KCQljLTAuNTksMy4wMi0wLjg4LDYuMDgtMC44OCw5LjE3YzAsNy45NiwyLjE1LDE0LjEzLDYuNDgsMTguNTVjNC4zLDQuMzgsMTAuMjgsNi41OSwxNy45LDYuNTljMTAuODksMCwyMS4xMi0yLjgsMzAuNjctOC40Mg0KCQljNC41Mi0yLjY2LDguNzEtNS44NiwxMi41OC05LjU4TDQ5My4zOSwxNzcuMDl6Ii8+DQoJPHBhdGggY2xhc3M9InN0MCIgZD0iTTEzMTUuMjQsMTc3LjA5Yy0xLjc0LDAuNzItNC44NiwxLjM5LTYuMDMsMS40Yy0yLjk3LDAuMDItNC4zMi00LjEtNC4wNi04LjJjMC4xMy0yLjA3LDAuNDUtNC42MSwwLjc5LTYuMjgNCgkJbDEwLjE4LTU2LjQyYzEuMTctNi44NywxLjc2LTEyLjY1LDEuNzYtMTcuMzVjMC05LjgtMi4xNi0xNi43NS02LjQ2LTIwLjg2Yy00LjMzLTQuMTEtMTAuNjMtNi4xNi0xOC45Mi02LjE2DQoJCWMtMTIuNTcsMC0yNC4yNiw0LjMyLTM1LjA3LDEyLjk0Yy0xMC44MSw4LjYzLTIwLjQsMjAuNjUtMjguNzcsMzYuMDdoLTAuODhsNS45MS0yNi41Mmw1LjE1LTIxLjExbC0xLjAxLTEuMzhsLTY4LjYyLDEzLjQ1DQoJCWwtMC4yNSwxLjY0bDkuNjcsMTYuODRsLTE3Ljk3LDEwMS4yOWw1NS41NS0yLjUxbDExLjE4LTY3LjExYzEuODUtNS4zNiw0LjkyLTExLjQxLDkuMjMtMTguMTZjNC4zMi02Ljc0LDguNjktMTIuNTEsMTMuMDctMTcuMjkNCgkJYzQuNDEtNC43OCw3LjczLTcuMTYsMTAtNy4xNmMxLjQyLDAsMi40NiwwLjQ5LDMuMDcsMS40NGMwLjY0LDAuOTgsMC45NSwyLjQyLDAuOTUsNC4zNGMwLDIuMDktMC40Miw1LjMyLTEuMjUsOS42N2wtMTEuNjksNjQuMjINCgkJYy0wLjU5LDMuMDItMC44OCw2LjA4LTAuODgsOS4xN2MwLDcuOTYsMi4xNSwxNC4xMyw2LjQ4LDE4LjU1YzQuMyw0LjM4LDEwLjI4LDYuNTksMTcuOSw2LjU5YzEwLjg5LDAsMjEuMTItMi44LDMwLjY3LTguNDINCgkJYzQuNTItMi42Niw4LjcxLTUuODYsMTIuNTctOS41OEwxMzE1LjI0LDE3Ny4wOXoiLz4NCgk8cGF0aCBjbGFzcz0ic3QwIiBkPSJNNTgwLjg2LDE2Ni4wN2MtNC43Nyw1LjY3LTguNjIsOC40OS0xMS41Niw4LjQ5Yy0yLjE4LDAtNC4wNy0wLjg5LTUuNjYtMi43MWMtMS41OS0xLjc4LTIuMzktNC43OS0yLjM5LTguOTgNCgkJYzAtMTUuNjcsMS41NS0zMC42OCw0LjY1LTQ1LjA2YzMuMS0xNC4zNSw3LjIxLTI1Ljk0LDEyLjMxLTM0Ljc0YzUuMTEtOC44LDEwLjQ0LTEzLjE5LDE1Ljk2LTEzLjE5YzIuNzYsMCw1LjM2LDEuMzIsNy43OSwzLjk1DQoJCWMyLjQyLDIuNjUsNC4yMyw2LjMxLDUuNCwxMWwtMi44OSwxOS43M2MtMi4xLDE0LjE2LTUuMzYsMjYuNTQtOS44LDM3LjEzQzU5MC4yNSwxNTIuMyw1ODUuNjMsMTYwLjQzLDU4MC44NiwxNjYuMDcNCgkJIE02NDcuODIsMTYzLjg2bDAuMDMsMC4wMWwyMS40OS0xMTguMjZsNy4xNi00MC4wOWwtMS41MS0xLjM4bC03NC4xNCwxMi4xOWwtMC4yNiwxLjYzbDE1LjIxLDE4LjIybC02LjI4LDM2LjE5DQoJCWMtNS43LTYuMTEtMTEuODktOS4xNy0xOC42LTkuMTdjLTE1LjE2LDAtMjkuMjQsMy45Ny00Mi4yMiwxMS44N2MtMTIuOTksNy45My0yMy4zMSwxOC43NC0zMC45OSwzMi40Mw0KCQljLTcuNjUsMTMuNzEtMTEuNDksMjguOC0xMS40OSw0NS4zMWMwLDEzLjgyLDMuMDMsMjQuODQsOS4xMiwzMy4wNWM2LjA2LDguMjEsMTQuOCwxMi4zMSwyNi4yLDEyLjMxYzcuMjEsMCwxNC41OC0yLjM0LDIyLjEyLTcuMDQNCgkJYzcuNTQtNC42OSwxNC4zNy0xMS4xMiwyMC40OS0xOS4zYzQuODYtNi40OCw4Ljc4LTEzLjU1LDExLjc4LTIxLjE3bC0zLjIyLDEyLjgxYy0wLjU5LDMuMDEtMC44OCw2LjA3LTAuODgsOS4xNw0KCQljMCw3Ljk2LDIuMTUsMTQuMTMsNi40OCwxOC41NGM0LjMsNC4zOSwxMC4yOCw2LjU5LDE3LjksNi41OWMxMC45LDAsMjEuMTItMi44MSwzMC42Ny04LjQyYzQuNTItMi42Niw4LjcxLTUuODcsMTIuNTgtOS41OA0KCQlsLTIuMjctMy4xYy0xLjc0LDAuNzItNC44NiwxLjM5LTYuMDMsMS40Yy0yLjk3LDAuMDEtNC4zMi00LjEtNC4wNi04LjJDNjQ3LjIsMTY3LjkxLDY0Ny40OSwxNjUuNTMsNjQ3LjgyLDE2My44NiIvPg0KCTxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik03NDAuMTYsMTY5Ljg1Yy0wLjI2LDQuMSwxLjA4LDguMjIsNC4wNSw4LjJjMS4xNywwLDQuMjktMC42Nyw2LjA0LTEuNGwyLjI2LDMuMQ0KCQljLTMuODYsMy43MS04LjA1LDYuOTItMTIuNTcsOS41OGMtOS41NSw1LjYxLTE5Ljc3LDguNDItMzAuNjcsOC40MmMtNy42MiwwLTEzLjYtMi4yMS0xNy45LTYuNTljLTQuMzMtNC40MS02LjQ4LTEwLjU4LTYuNDgtMTguNTQNCgkJYzAtMy4xLDAuMjktNi4xNiwwLjg4LTkuMThsMTMuMjctNjguMzFsLTkuNjctMTYuNDZsMC4zOC0xLjg5bDY5Ljc1LTEzLjU3bDEsMS4zOEw3NDAuMTYsMTY5Ljg1eiIvPg0KCTxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik0xMDAyLjM4LDE3OC4xMmMtMi45NywwLjAyLTQuMzEtNC4xLTQuMDYtOC4ybDIuMDctMTMuOGw5LjA1LTUxLjY5YzAuOTItNC45NCwxLjM4LTkuNjcsMS4zOC0xNC4yDQoJCWMwLTEwLjcyLTIuNDctMTcuOTEtNy40MS0yMS41NWMtNC45NC0zLjY1LTExLjEtNS40Ny0xOC40Ny01LjQ3Yy04Ljg4LDAtMTcuMjYsMi4yNi0yNS4xNCw2Ljc5DQoJCWMtNy44OCw0LjUyLTE0Ljc3LDEwLjUyLTIwLjY2LDE3Ljk3Yy01LjkyLDcuNDYtMTAuNTQsMTUuNjItMTMuODksMjQuNTFoLTEuMDFsMi42NC0xMS45NGMwLjY3LTQuMDMsMS4wMS04LjEzLDEuMDEtMTIuMzINCgkJYzAtOC43OS0yLjA3LTE1LjE2LTYuMjMtMTkuMWMtNC4xMy0zLjk0LTEwLjYxLTUuOTEtMTkuNDEtNS45MWMtOC44OCwwLTE3LjIyLDIuNDItMjUuMDEsNy4yM2MtNy43OSw0LjgyLTE0LjU4LDEwLjk1LTIwLjM2LDE4LjQxDQoJCWMtNS43OCw3LjQ1LTEwLjM5LDE1LjI1LTEzLjgzLDIzLjM3aC0xbDUuMjgtMjUuNjRsNS40LTIxLjk5bC0xLjEzLTEuMzhsLTY4LjQ5LDEzLjQ1bC0wLjI1LDEuNjRsOS42NywxNi44NGwtMTguMSwxMDEuMjkNCgkJbDU1LjY3LTIuODlsMTEuODEtNjcuMjNjMS4yNi00Ljg2LDMuODMtMTAuNjUsNy43NC0xNy40YzMuODgtNi43NCw3Ljk3LTEyLjU2LDEyLjI1LTE3LjQxYzQuMjctNC44Niw3LjYyLTcuMjksMTAuMDUtNy4yOQ0KCQljMi4xOCwwLDMuMjcsMS43NiwzLjI3LDUuMjhjMCwyLjY4LTAuMzgsNS45LTEuMTMsOS42OGwtMTcuMjIsOTcuMjdsNTUuNTUtMi41MWwxMS42OS02OC4yNGMxLjE3LTQuNzgsMy42MS0xMC40Nyw3LjM0LTE3LjA5DQoJCWMzLjczLTYuNjIsNy43NC0xMi4zMywxMi4wMS0xNy4xNmM0LjI4LTQuOCw3LjcxLTcuMjIsMTAuMzEtNy4yMmMyLjE3LDAsMy4yNywxLjg0LDMuMjcsNS41M2MwLDEuMjYtMC4xMywyLjY0LTAuMzgsNC4xNQ0KCQlsLTkuODcsNTUuNDRsLTIuODUsMTQuMmMtMC41OSwzLjAxLTAuODgsNi4wNy0wLjg4LDkuMTdjMCw3Ljk2LDIuMTUsMTQuMTMsNi40OCwxOC41NGM0LjMsNC4zOSwxMC4yOCw2LjYsMTcuOSw2LjYNCgkJYzEwLjg5LDAsMjEuMTEtMi44MSwzMC42Ni04LjQyYzQuNTMtMi42Niw4LjcxLTUuODYsMTIuNTgtOS41OGwtMi4yNy0zLjFDMTAwNi42OCwxNzcuNDQsMTAwMy41NiwxNzguMTEsMTAwMi4zOCwxNzguMTIiLz4NCgk8cGF0aCBjbGFzcz0ic3QwIiBkPSJNMTM4OCwxNzcuMDJjMi40LDMuMjYsNi43OSw1Ljg2LDEwLjk4LDUuODZjMi4xNywwLDUuNDYtMS4xLDYuODYtMS44N2wzLjI1LDUuNg0KCQljLTIuNzgsMS43Mi01LjcxLDMuMzMtOC44Miw0Ljc5Yy05LjYzLDQuNTMtMTkuOTQsNi43OS0zMC45MSw2Ljc5Yy03LjEzLDAtMTMuNTMtMS4xMi0xOS4yMy0zLjMyDQoJCWMtNS42OS0yLjIzLTEwLjIxLTUuNi0xMy41MS0xMC4xM2MtMy4zMS00LjUyLTQuOTYtMTAuMDktNC45Ni0xNi43MWMwLTIuODQsMC4yMS01LjM2LDAuNjMtNy41NGwxNS41OC04OC43MmgtMTUuMzNsMC4yNi0xLjEzDQoJCWw3My41Mi0zNy45NmgyLjc2bC01LjksMzMuNjhoMzYuNDRsLTEuMDEsNS40MWgtMzYuNDVsLTE1LjMzLDg3LjA5QzEzODYuMjMsMTYyLjYsMTM4NC44MiwxNzIuNjksMTM4OCwxNzcuMDIiLz4NCjwvZz4NCjxsaW5lYXJHcmFkaWVudCBpZD0iU1ZHSURfMV8iIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIiB4MT0iLTk1OC43OTgxIiB5MT0iMTE3Ljg3OSIgeDI9Ii0zNzMuNzk0NiIgeTI9IjExNy44NzkiPg0KCTxzdG9wICBvZmZzZXQ9IjAiIHN0eWxlPSJzdG9wLWNvbG9yOiMwQTFENkYiLz4NCgk8c3RvcCAgb2Zmc2V0PSIxIiBzdHlsZT0ic3RvcC1jb2xvcjojMDAwMDAwIi8+DQo8L2xpbmVhckdyYWRpZW50Pg0KPHJlY3QgeD0iLTk1OC44IiB5PSItMzYxLjQiIGNsYXNzPSJzdDEiIHdpZHRoPSI1ODUiIGhlaWdodD0iOTU4LjU2Ii8+DQo8L3N2Zz4NCg==" alt="Banco Rendimento" width="158" height="22">
+    <span class="topo-divisor" aria-hidden="true"></span>
+    <div class="topo-titulo">
+      <span class="topo-nome">Ficha única da operação</span>
+      <span class="topo-processo">Cobrança de Importação</span>
+    </div>
+  </div>
+  <div class="topo-controles">
+    <div class="seletor-modulo" role="group" aria-label="Módulo do projeto">
+      <button type="button" data-acao="modulo" data-modulo="1"><b>1</b><span class="seletor-nome">Leitura e conferência</span></button>
+      <button type="button" data-acao="modulo" data-modulo="2"><b>2</b><span class="seletor-nome">Acompanhamento</span></button>
+    </div>
+    <div class="selo" id="selo" tabindex="0" aria-describedby="selo-dica">
+      Exemplo ilustrativo
+      <span class="selo-dica" id="selo-dica" role="tooltip">Os envelopes, os documentos e os campos desta tela são fictícios e mostram como o analista de câmbio vai trabalhar com a solução. Os campos reais saem do inventário dos documentos, e nada desta página é gravado nem enviado.</span>
+    </div>
+  </div>
+</header>
+<nav class="abas" id="abas" aria-label="Telas"></nav>
+<div class="faixa-modulo" id="faixa-modulo"></div>
+<main id="tela" tabindex="-1"></main>
+<footer class="rodape">
+  <span class="selo-texto">Exemplo ilustrativo</span>
+  Dados fictícios. O estado fica só nesta página: nada é gravado no Change nem enviado pelo Alliance, e o analista continua copiando os dados e enviando a mensagem.
+</footer>
+<div class="aviso-copia" id="aviso-copia" role="status" aria-live="polite"></div>
+<script>
+/* Dados fictícios do protótipo da ficha única da operação.
+
+   Tudo aqui é inventado: bancos "Banco Exemplo Alfa" a "Épsilon", importadoras e exportadoras de
+   nome genérico, números redondos. Os documentos de cada envelope são montados na tela do envelope
+   a partir dos valores de "documentos" abaixo; "variantes" troca um valor num documento só, e é assim
+   que nasce uma divergência entre documentos do mesmo envelope.
+
+   Datas no formato ISO local (AAAA-MM-DDTHH:MM). O "hoje" do protótipo é 19/11/2026. */
+
+const HOJE = '2026-11-19';
+const RELOGIO_INICIAL = '2026-11-19T10:30';   // o relógio simulado avança a cada ação do analista
+const FERIADOS = ['2026-11-15', '2026-11-20']; // contam para o prazo D1, que só cai em dia útil
+
+const MODULOS = {
+  1: 'Módulo 1 · Leitura e conferência dos documentos',
+  2: 'Módulo 2 · Acompanhamento de Swift e prazos',
+};
+
+/* As três abas do Change e os campos de cada uma, na ordem em que o analista os digita.
+   Campos ilustrativos: os reais saem do inventário dos documentos. */
+const ABAS_DO_CHANGE = [
+  { id: 'dados-basicos', nome: 'Dados-Básicos',
+    campos: ['referencia', 'banqueiro', 'importador', 'exportador', 'valor', 'moeda', 'condicao', 'recebimento'] },
+  { id: 'embarque', nome: 'Embarque',
+    campos: ['conhecimento', 'dataEmbarque', 'portoEmbarque', 'portoDestino'] },
+  { id: 'documentos', nome: 'Documentos',
+    campos: ['invoice', 'dataInvoice', 'fatura', 'protocolo'] },
+];
+
+const ROTULOS = {
+  referencia: 'Referência da cobrança',
+  banqueiro: 'Banqueiro remetente',
+  importador: 'Importador (sacado)',
+  exportador: 'Exportador (sacador)',
+  valor: 'Valor',
+  moeda: 'Moeda',
+  condicao: 'Condição de pagamento',
+  recebimento: 'Data de recebimento',
+  conhecimento: 'Nº do conhecimento de embarque',
+  dataEmbarque: 'Data de embarque',
+  portoEmbarque: 'Porto de embarque',
+  portoDestino: 'Porto de destino',
+  invoice: 'Nº da invoice',
+  dataInvoice: 'Data da invoice',
+  fatura: 'Nº da fatura',
+  protocolo: 'Nº do protocolo DHL',
+};
+
+/* De que documento, página e trecho sai cada campo. O trecho é o atributo data-trecho do documento
+   montado na tela do envelope. */
+const ORIGEM_DOS_CAMPOS = {
+  referencia: { doc: 'carta', pagina: 1, trecho: 'carta-referencia' },
+  banqueiro: { doc: 'carta', pagina: 1, trecho: 'carta-banqueiro' },
+  importador: { doc: 'carta', pagina: 1, trecho: 'carta-importador' },
+  exportador: { doc: 'carta', pagina: 1, trecho: 'carta-exportador' },
+  valor: { doc: 'carta', pagina: 1, trecho: 'carta-valor' },
+  moeda: { doc: 'carta', pagina: 1, trecho: 'carta-valor' },
+  condicao: { doc: 'carta', pagina: 1, trecho: 'carta-instrucao' },
+  recebimento: { doc: 'dhl', pagina: 1, trecho: 'dhl-recebimento' },
+  conhecimento: { doc: 'conhecimento', pagina: 1, trecho: 'bl-numero' },
+  dataEmbarque: { doc: 'conhecimento', pagina: 1, trecho: 'bl-data' },
+  portoEmbarque: { doc: 'conhecimento', pagina: 1, trecho: 'bl-porto-embarque' },
+  portoDestino: { doc: 'conhecimento', pagina: 1, trecho: 'bl-porto-destino' },
+  invoice: { doc: 'invoice', pagina: 1, trecho: 'invoice-numero' },
+  dataInvoice: { doc: 'invoice', pagina: 1, trecho: 'invoice-data' },
+  fatura: { doc: 'fatura', pagina: 1, trecho: 'fatura-numero' },
+  protocolo: { doc: 'dhl', pagina: 1, trecho: 'dhl-numero' },
+};
+
+const NOMES_DOS_DOCUMENTOS = {
+  carta: 'Carta remessa',
+  fatura: 'Fatura',
+  invoice: 'Invoice',
+  conhecimento: 'Conhecimento de embarque',
+  dhl: 'Protocolo DHL',
+};
+
+/* Conferências por regra fixa e os campos da ficha que cada uma confere. A divergência de um
+   envelope aponta para uma destas regras. */
+const REGRAS = [
+  { id: 'valor', campos: ['valor', 'moeda'], texto: 'Valor e moeda iguais na carta remessa, na fatura e na invoice' },
+  { id: 'importador', campos: ['importador'], texto: 'Importador igual na carta remessa, na fatura e na invoice' },
+  { id: 'exportador', campos: ['exportador'], texto: 'Exportador igual na carta remessa, na fatura e na invoice' },
+  { id: 'invoice', campos: ['invoice'], texto: 'Número da invoice igual na carta remessa e na invoice' },
+  { id: 'conhecimento', campos: ['conhecimento'], texto: 'Número do conhecimento de embarque igual na invoice, no conhecimento de embarque e no protocolo DHL' },
+  { id: 'referencia', campos: ['referencia'], texto: 'Referência da cobrança igual na carta remessa e no protocolo DHL' },
+];
+
+const TIPOS_DE_RESPOSTA = [
+  'Confirmou o recebimento',
+  'Enviou nova instrução',
+  'Pediu a devolução dos documentos',
+  'Outra resposta',
+];
+
+/* Os seis envelopes da fila de hoje. "documentos" traz o que está impresso nos papéis, em inglês,
+   como chega do banqueiro do exterior; a ficha mostra os mesmos valores no formato brasileiro. */
+const ENVELOPES = [
+  {
+    id: 'ENV-0101', recebidoEm: '2026-11-19T09:12', prazo: 'D0', origem: 'digitalizado', situacao: 'divergencia',
+    documentos: {
+      referencia: 'ALFA/COL/26/1001', banqueiro: 'Banco Exemplo Alfa', importador: 'Importadora Exemplo Ltda.',
+      exportador: 'Exporter Example Co.', moeda: 'USD', valor: 48250, invoice: 'INV-2026-0500', dataInvoice: '2026-11-05',
+      fatura: 'FT-2026-0300', conhecimento: 'EXBL-2026-1180', dataEmbarque: '2026-11-08', portoEmbarque: 'Example Port',
+      portoDestino: 'Santos', protocolo: '1000 2000 30', item: 'Industrial valves, model EX-100', quantidade: 500,
+      instrucao: 'Please release the documents to the drawee only against payment of the full amount. All our charges are for account of the drawee and may not be waived.',
+    },
+    variantes: { fatura: { valor: 48520 }, dhl: { conhecimento: 'EXBL-2026-1108' } },
+    interpretacao: { entrega: 'contra pagamento', despesas: 'por conta do importador, sem dispensa' },
+    divergencias: [
+      { id: 'div-valor', regra: 'valor', campo: 'valor',
+        lados: [{ doc: 'carta', pagina: 1, trecho: 'carta-valor' }, { doc: 'fatura', pagina: 1, trecho: 'fatura-valor' }],
+        leitura: 'Os dois valores têm os mesmos dígitos, com o 2 e o 5 trocados. A invoice traz USD 48,250.00, que é o valor da carta remessa.',
+        opcoes: [
+          { rotulo: 'Manter o valor da carta remessa e da invoice', valor: '48.250,00' },
+          { rotulo: 'Usar o valor da fatura', valor: '48.520,00' },
+        ] },
+      { id: 'div-conhecimento', regra: 'conhecimento', campo: 'conhecimento',
+        lados: [{ doc: 'invoice', pagina: 2, trecho: 'invoice-conhecimento' }, { doc: 'dhl', pagina: 1, trecho: 'dhl-conhecimento' }],
+        leitura: 'O protocolo DHL traz os dois últimos dígitos invertidos. O conhecimento de embarque traz EXBL-2026-1180, que é o número da invoice.',
+        opcoes: [
+          { rotulo: 'Manter o número da invoice e do conhecimento de embarque', valor: 'EXBL-2026-1180' },
+          { rotulo: 'Usar o número do protocolo DHL', valor: 'EXBL-2026-1108' },
+        ] },
+    ],
+  },
+  {
+    id: 'ENV-0102', recebidoEm: '2026-11-19T08:40', prazo: 'D1', origem: 'digitalizado', situacao: 'lido',
+    documentos: {
+      referencia: 'BETA-IC-26-2002', banqueiro: 'Banco Exemplo Beta', importador: 'Comercial Modelo S.A.',
+      exportador: 'Example Exports Ltd.', moeda: 'EUR', valor: 15000, invoice: 'EX-INV-2026-0120', dataInvoice: '2026-10-28',
+      fatura: 'FT-2026-0120', conhecimento: 'EXBL-2026-2200', dataEmbarque: '2026-11-01', portoEmbarque: 'Example Port',
+      portoDestino: 'Paranaguá', protocolo: '1000 2000 40', item: 'Packaging machine parts', quantidade: 100,
+      instrucao: 'Deliver the documents against acceptance of the enclosed draft at 60 days after bill of lading date. Advise acceptance by authenticated message.',
+    },
+    variantes: {},
+    interpretacao: { entrega: 'contra aceite', despesas: 'não informadas na carta remessa', observacao: 'saque com vencimento em 60 dias da data do conhecimento de embarque; avisar o aceite por mensagem autenticada' },
+    divergencias: [],
+  },
+  {
+    id: 'ENV-0103', recebidoEm: '2026-11-19T10:05', prazo: 'D1', origem: 'digitalizado', situacao: 'novo',
+    documentos: {
+      referencia: 'GAMA-26-3003', banqueiro: 'Banco Exemplo Gama', importador: 'Indústria Fictícia Ltda.',
+      exportador: 'Sample Manufacturing Inc.', moeda: 'USD', valor: 120000, invoice: 'SM-2026-0300', dataInvoice: '2026-11-02',
+      fatura: 'FT-2026-0900', conhecimento: 'EXBL-2026-3300', dataEmbarque: '2026-11-06', portoEmbarque: 'Sample Harbor',
+      portoDestino: 'Itajaí', protocolo: '1000 2000 50', item: 'Electric motors, series S-20', quantidade: 200,
+      instrucao: 'Documents to be delivered against payment only. Collection charges outside Brazil for our account.',
+    },
+    variantes: {},
+    interpretacao: { entrega: 'contra pagamento', despesas: 'no exterior por conta do exportador' },
+    divergencias: [],
+  },
+  {
+    id: 'ENV-0104', recebidoEm: '2026-11-18T15:30', prazo: 'D1', origem: 'digitalizado', situacao: 'aprovado',
+    aprovadoEm: '2026-11-18T16:20', avisoEm: '2026-11-18T16:40',
+    swift: { situacao: 'aguardando', enviadaEm: '2026-11-18T16:45', resposta: null },
+    documentos: {
+      referencia: 'DELTA-26-4004', banqueiro: 'Banco Exemplo Delta', importador: 'Importadora Exemplo Ltda.',
+      exportador: 'Model Trading GmbH', moeda: 'GBP', valor: 8000, invoice: 'MTG-26-0040', dataInvoice: '2026-11-03',
+      fatura: 'FT-2026-0040', conhecimento: 'EXBL-2026-4400', dataEmbarque: '2026-11-07', portoEmbarque: 'Model Port',
+      portoDestino: 'Santos', protocolo: '1000 2000 60', item: 'Laboratory glassware', quantidade: 40,
+      instrucao: 'Release documents against payment. Our charges for account of the drawer.',
+    },
+    variantes: {},
+    interpretacao: { entrega: 'contra pagamento', despesas: 'por conta do exportador' },
+    divergencias: [],
+  },
+  {
+    id: 'ENV-0105', recebidoEm: '2026-11-18T11:00', prazo: 'D0', origem: 'digitalizado', situacao: 'aprovado',
+    aprovadoEm: '2026-11-18T11:40', avisoEm: '2026-11-18T12:00',
+    swift: { situacao: 'aguardando', enviadaEm: '2026-11-18T12:05', resposta: null },
+    documentos: {
+      referencia: 'ALFA/COL/26/0950', banqueiro: 'Banco Exemplo Alfa', importador: 'Distribuidora Modelo Ltda.',
+      exportador: 'Exporter Example Co.', moeda: 'USD', valor: 30000, invoice: 'INV-2026-0450', dataInvoice: '2026-10-30',
+      fatura: 'FT-2026-0250', conhecimento: 'EXBL-2026-0950', dataEmbarque: '2026-11-04', portoEmbarque: 'Example Port',
+      portoDestino: 'Santos', protocolo: '1000 2000 70', item: 'Industrial valves, model EX-200', quantidade: 300,
+      instrucao: 'Please release the documents to the drawee only against payment of the full amount.',
+    },
+    variantes: {},
+    interpretacao: { entrega: 'contra pagamento', despesas: 'não informadas na carta remessa' },
+    divergencias: [],
+  },
+  {
+    id: 'ENV-0106', recebidoEm: '2026-11-19T07:55', prazo: 'D1', origem: 'antecipada', situacao: 'lido',
+    documentos: {
+      referencia: 'EPS-26-6006', banqueiro: 'Banco Exemplo Épsilon', importador: 'Comercial Modelo S.A.',
+      exportador: 'Example Exports Ltd.', moeda: 'EUR', valor: 62500, invoice: 'EX-INV-2026-0160', dataInvoice: '2026-11-04',
+      fatura: 'FT-2026-0160', conhecimento: 'EXBL-2026-6600', dataEmbarque: '2026-11-09', portoEmbarque: 'Example Port',
+      portoDestino: 'Rio Grande', protocolo: '1000 2000 80', item: 'Textile machinery spare parts', quantidade: 250,
+      instrucao: 'Deliver documents against payment. Do not protest in case of non-payment; advise us by authenticated message.',
+    },
+    variantes: {},
+    interpretacao: { entrega: 'contra pagamento', despesas: 'não informadas na carta remessa', observacao: 'não protestar em caso de falta de pagamento; avisar o banqueiro por mensagem autenticada' },
+    divergencias: [],
+    // O envelope físico chegou depois da cópia digital e foi digitalizado na mesma pasta
+    envelopeDigitalizado: { chegouEm: '2026-11-19T10:20', arquivos: 5 },
+  },
+];
+
+/* Cobranças de dias anteriores, já aprovadas. Só alimentam o acompanhamento e o painel do Módulo 2. */
+const HISTORICO = [
+  { id: 'ENV-0091', recebidoEm: '2026-11-10T09:30', prazo: 'D0', banqueiro: 'Banco Exemplo Alfa', importador: 'Importadora Exemplo Ltda.', moeda: 'USD', valor: 25000,
+    aprovadoEm: '2026-11-10T10:05', avisoEm: '2026-11-10T10:20', swift: { situacao: 'respondida', enviadaEm: '2026-11-10T10:25', resposta: { em: '2026-11-11T09:00', tipo: 'Confirmou o recebimento' } } },
+  { id: 'ENV-0092', recebidoEm: '2026-11-10T14:00', prazo: 'D1', banqueiro: 'Banco Exemplo Beta', importador: 'Comercial Modelo S.A.', moeda: 'EUR', valor: 10000,
+    aprovadoEm: '2026-11-11T09:30', avisoEm: '2026-11-11T09:50', swift: { situacao: 'respondida', enviadaEm: '2026-11-11T09:55', resposta: { em: '2026-11-12T10:00', tipo: 'Confirmou o recebimento' } } },
+  { id: 'ENV-0093', recebidoEm: '2026-11-11T10:10', prazo: 'D0', banqueiro: 'Banco Exemplo Gama', importador: 'Indústria Fictícia Ltda.', moeda: 'USD', valor: 75000,
+    aprovadoEm: '2026-11-11T10:40', avisoEm: '2026-11-11T11:00', swift: { situacao: 'respondida', enviadaEm: '2026-11-11T11:05', resposta: { em: '2026-11-12T15:00', tipo: 'Confirmou o recebimento' } } },
+  { id: 'ENV-0094', recebidoEm: '2026-11-12T09:00', prazo: 'D0', banqueiro: 'Banco Exemplo Delta', importador: 'Distribuidora Modelo Ltda.', moeda: 'GBP', valor: 12000,
+    aprovadoEm: '2026-11-13T10:00', avisoEm: '2026-11-13T10:30', swift: { situacao: 'respondida', enviadaEm: '2026-11-13T10:35', resposta: { em: '2026-11-16T09:30', tipo: 'Confirmou o recebimento' } } },
+  { id: 'ENV-0095', recebidoEm: '2026-11-13T11:20', prazo: 'D1', banqueiro: 'Banco Exemplo Alfa', importador: 'Importadora Exemplo Ltda.', moeda: 'USD', valor: 40000,
+    aprovadoEm: '2026-11-13T15:00', avisoEm: '2026-11-13T15:20', swift: { situacao: 'respondida', enviadaEm: '2026-11-13T15:25', resposta: { em: '2026-11-16T11:00', tipo: 'Enviou nova instrução' } } },
+  { id: 'ENV-0096', recebidoEm: '2026-11-16T09:45', prazo: 'D0', banqueiro: 'Banco Exemplo Épsilon', importador: 'Comercial Modelo S.A.', moeda: 'EUR', valor: 20000,
+    aprovadoEm: '2026-11-16T10:30', avisoEm: '2026-11-16T10:50', swift: { situacao: 'aguardando', enviadaEm: '2026-11-16T10:55', resposta: null } },
+  { id: 'ENV-0097', recebidoEm: '2026-11-17T10:00', prazo: 'D1', banqueiro: 'Banco Exemplo Beta', importador: 'Indústria Fictícia Ltda.', moeda: 'EUR', valor: 50000,
+    aprovadoEm: '2026-11-17T16:00', avisoEm: '2026-11-18T09:10', swift: { situacao: 'respondida', enviadaEm: '2026-11-18T09:15', resposta: { em: '2026-11-18T14:00', tipo: 'Confirmou o recebimento' } } },
+  { id: 'ENV-0098', recebidoEm: '2026-11-17T13:30', prazo: 'D0', banqueiro: 'Banco Exemplo Gama', importador: 'Importadora Exemplo Ltda.', moeda: 'USD', valor: 60000,
+    aprovadoEm: '2026-11-17T14:10', avisoEm: '2026-11-17T14:30', swift: { situacao: 'aguardando', enviadaEm: '2026-11-17T14:35', resposta: null } },
+];
+
+/* Núcleo do protótipo: estado em memória, relógio simulado, formatação, módulo e navegação.
+
+   Nada sai desta página. O estado vive no objeto BR e some quando a página é recarregada. As telas
+   (fila, envelope e acompanhamento) registram a função de desenho em TELAS e as ações em ACOES; o
+   núcleo redesenha a tela inteira a cada mudança de estado, exceto onde a tela pede só um trecho. */
+
+const TELAS = {};
+const ACOES = {};
+
+const BR = {
+  estado: {
+    modulo: 1,
+    tela: 'fila',
+    envelopeId: null,
+    passo: 'campos',          // campos | divergencias | aprovacao | aprovada
+    documento: 'carta',
+    campoAtivo: null,
+    trechoAtivo: null,
+    filtro: 'todas',
+  },
+  envelopes: [],
+  historico: [],
+  relogio: RELOGIO_INICIAL,
+  ultimaCopia: '',
+};
+window.BR = BR;
+
+// ---------------------------------------------------------------------------
+// Formatação
+// ---------------------------------------------------------------------------
+const MESES_EN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+function esc(texto) {
+  return String(texto ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+function paraData(iso) {
+  const [dia, horario = '00:00'] = iso.split('T');
+  const [a, m, d] = dia.split('-').map(Number);
+  const [h, min] = horario.split(':').map(Number);
+  return new Date(a, m - 1, d, h, min);
+}
+
+function paraIso(data) {
+  const dois = (n) => String(n).padStart(2, '0');
+  return `${data.getFullYear()}-${dois(data.getMonth() + 1)}-${dois(data.getDate())}T${dois(data.getHours())}:${dois(data.getMinutes())}`;
+}
+
+const diaDe = (iso) => iso.slice(0, 10);
+const dataCurta = (iso) => `${iso.slice(8, 10)}/${iso.slice(5, 7)}`;
+const dataLonga = (iso) => `${iso.slice(8, 10)}/${iso.slice(5, 7)}/${iso.slice(0, 4)}`;
+const dataHora = (iso) => `${dataCurta(iso)} ${iso.slice(11, 16)}`;
+const dataEmIngles = (iso) => `${iso.slice(8, 10)} ${MESES_EN[Number(iso.slice(5, 7)) - 1]} ${iso.slice(0, 4)}`;
+const dataSwift = (iso) => `${iso.slice(8, 10)}${MESES_EN[Number(iso.slice(5, 7)) - 1].toUpperCase()}${iso.slice(0, 4)}`;
+
+function valorBR(numero) {
+  const [inteiro, centavos] = numero.toFixed(2).split('.');
+  return `${inteiro.replace(/\B(?=(\d{3})+(?!\d))/g, '.')},${centavos}`;
+}
+
+function valorEN(numero) {
+  const [inteiro, centavos] = numero.toFixed(2).split('.');
+  return `${inteiro.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}.${centavos}`;
+}
+
+function duracao(minutos) {
+  if (minutos < 60) return `${minutos} min`;
+  const h = Math.floor(minutos / 60);
+  const resto = minutos % 60;
+  return resto ? `${h} h ${resto} min` : `${h} h`;
+}
+
+const minutosEntre = (inicioIso, fimIso) => Math.round((paraData(fimIso) - paraData(inicioIso)) / 60000);
+
+// Texto da mensagem Swift: maiúsculas e sem acento, como o Alliance aceita
+const semAcento = (texto) => texto.normalize('NFD').replace(/[̀-ͯ]/g, '');
+
+// ---------------------------------------------------------------------------
+// Relógio simulado e prazos
+// ---------------------------------------------------------------------------
+function agora() {
+  const data = paraData(BR.relogio);
+  data.setMinutes(data.getMinutes() + 2);
+  BR.relogio = paraIso(data);
+  return BR.relogio;
+}
+
+function ehDiaUtil(data) {
+  const fimDeSemana = data.getDay() === 0 || data.getDay() === 6;
+  return !fimDeSemana && !FERIADOS.includes(paraIso(data).slice(0, 10));
+}
+
+/* D0: registro no dia do recebimento. D1: no dia útil seguinte. */
+function limiteDoPrazo(cobranca) {
+  const data = paraData(diaDe(cobranca.recebidoEm));
+  if (cobranca.prazo === 'D1') {
+    do { data.setDate(data.getDate() + 1); } while (!ehDiaUtil(data));
+  }
+  return paraIso(data).slice(0, 10);
+}
+
+function prazoCumprido(cobranca) {
+  return Boolean(cobranca.aprovadoEm) && diaDe(cobranca.aprovadoEm) <= limiteDoPrazo(cobranca);
+}
+
+// ---------------------------------------------------------------------------
+// Ficha de cada envelope: os campos lidos, as correções e o registro de cada passo
+// ---------------------------------------------------------------------------
+function valoresLidos(envelope) {
+  const d = envelope.documentos;
+  return {
+    referencia: d.referencia, banqueiro: d.banqueiro, importador: d.importador, exportador: d.exportador,
+    valor: valorBR(d.valor), moeda: d.moeda, condicao: `Entrega dos documentos ${envelope.interpretacao.entrega}`,
+    recebimento: dataLonga(envelope.recebidoEm), conhecimento: d.conhecimento, dataEmbarque: dataLonga(d.dataEmbarque),
+    portoEmbarque: d.portoEmbarque, portoDestino: d.portoDestino, invoice: d.invoice, dataInvoice: dataLonga(d.dataInvoice),
+    fatura: d.fatura, protocolo: d.protocolo,
+  };
+}
+
+function criarFicha(envelope) {
+  const lidos = valoresLidos(envelope);
+  const aprovado = envelope.situacao === 'aprovado';
+  const campos = {};
+  Object.entries(lidos).forEach(([campo, valor]) => { campos[campo] = { valor, lido: valor }; });
+  const divergencias = {};
+  envelope.divergencias.forEach((div) => { divergencias[div.id] = { resolvida: aprovado, valor: null }; });
+  const registro = [{ em: envelope.recebidoEm, texto: envelope.origem === 'antecipada' ? 'Cópia digital antecipada salva na pasta' : 'Envelope digitalizado salvo na pasta' }];
+  if (envelope.situacao !== 'novo') registro.push({ em: paraIso(new Date(paraData(envelope.recebidoEm).getTime() + 2 * 60000)), texto: 'Leitura e conferência concluídas' });
+  if (aprovado) registro.push({ em: envelope.aprovadoEm, texto: 'Ficha aprovada pelo analista de câmbio' });
+  return { campos, divergencias, instrucaoConfirmada: aprovado, entrega: envelope.interpretacao.entrega, vinculado: false, registro };
+}
+
+function iniciarDados() {
+  BR.envelopes = ENVELOPES.map((original) => {
+    const envelope = JSON.parse(JSON.stringify(original));
+    envelope.ficha = criarFicha(envelope);
+    if (envelope.situacao === 'aprovado' && !envelope.swift) envelope.swift = { situacao: 'a-enviar', enviadaEm: null, resposta: null };
+    return envelope;
+  });
+  BR.historico = JSON.parse(JSON.stringify(HISTORICO));
+}
+
+const envelopePorId = (id) => BR.envelopes.find((e) => e.id === id);
+const envelopeAberto = () => envelopePorId(BR.estado.envelopeId);
+const divergenciasAbertas = (envelope) => envelope.divergencias.filter((d) => !envelope.ficha.divergencias[d.id].resolvida);
+
+function pendenciasDaAprovacao(envelope) {
+  const pendencias = [];
+  const abertas = divergenciasAbertas(envelope).length;
+  if (abertas) pendencias.push(abertas === 1 ? '1 divergência aberta' : `${abertas} divergências abertas`);
+  if (!envelope.ficha.instrucaoConfirmada) pendencias.push('Instrução da carta remessa a confirmar');
+  return pendencias;
+}
+
+/* Todas as cobranças com ficha aprovada: as de hoje e as dos dias anteriores. */
+function cobrancasAprovadas() {
+  const deHoje = BR.envelopes.filter((e) => e.situacao === 'aprovado').map((e) => ({
+    id: e.id, recebidoEm: e.recebidoEm, prazo: e.prazo, banqueiro: e.documentos.banqueiro, importador: e.documentos.importador,
+    moeda: e.documentos.moeda, valor: e.documentos.valor, aprovadoEm: e.aprovadoEm, avisoEm: e.avisoEm, swift: e.swift, envelope: e,
+  }));
+  return [...deHoje, ...BR.historico].sort((a, b) => (a.recebidoEm < b.recebidoEm ? 1 : -1));
+}
+
+// ---------------------------------------------------------------------------
+// Peças de interface usadas por mais de uma tela
+// ---------------------------------------------------------------------------
+const SITUACOES = {
+  novo: { texto: 'Novo', classe: 'sit-novo', sinal: '○' },
+  lido: { texto: 'Lido, a revisar', classe: 'sit-lido', sinal: '●' },
+  divergencia: { texto: 'Com divergência', classe: 'sit-divergencia', sinal: '!' },
+  aprovado: { texto: 'Aprovado', classe: 'sit-aprovado', sinal: '✓' },
+};
+
+function seloSituacao(envelope) {
+  const s = SITUACOES[envelope.situacao];
+  const abertas = envelope.situacao === 'divergencia' ? ` (${divergenciasAbertas(envelope).length})` : '';
+  return `<span class="situacao ${s.classe}"><span class="situacao-sinal" aria-hidden="true">${s.sinal}</span>${s.texto}${abertas}</span>`;
+}
+
+function textoPrazo(cobranca) {
+  return `${cobranca.prazo} · até ${dataCurta(limiteDoPrazo(cobranca))}`;
+}
+
+function mostrarAviso(texto) {
+  const aviso = document.getElementById('aviso-copia');
+  aviso.textContent = texto;
+  aviso.classList.add('visivel');
+  clearTimeout(mostrarAviso.espera);
+  mostrarAviso.espera = setTimeout(() => aviso.classList.remove('visivel'), 1800);
+}
+
+/* Copia para a área de transferência do analista. Se o navegador recusar, usa a cópia antiga. */
+function copiar(texto, rotulo) {
+  BR.ultimaCopia = texto;
+  const avisar = () => mostrarAviso(`${rotulo} copiado`);
+  const copiaAntiga = () => {
+    const area = document.createElement('textarea');
+    area.value = texto;
+    area.setAttribute('readonly', '');
+    area.style.position = 'fixed';
+    area.style.opacity = '0';
+    document.body.appendChild(area);
+    area.select();
+    try { document.execCommand('copy'); } catch (erro) { /* sem cópia: o texto continua na tela */ }
+    area.remove();
+    avisar();
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(texto).then(avisar, copiaAntiga);
+  } else {
+    copiaAntiga();
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Abas, faixa do módulo e desenho da tela
+// ---------------------------------------------------------------------------
+function desenharAbas() {
+  const { estado } = BR;
+  const aFazer = BR.envelopes.filter((e) => e.situacao !== 'aprovado').length;
+  const aberto = envelopeAberto();
+  const abas = [
+    { tela: 'fila', texto: `Fila de envelopes <span class="aba-contagem">${aFazer} a revisar</span>`, desativada: false },
+    { tela: 'envelope', texto: aberto ? `Envelope ${aberto.id}` : 'Envelope aberto <span class="aba-indicacao">abra um envelope na fila</span>', desativada: !aberto },
+    { tela: 'acompanhamento', texto: estado.modulo >= 2 ? 'Acompanhamento' : 'Acompanhamento <span class="aba-indicacao">entra no Módulo 2</span>', desativada: estado.modulo < 2 },
+  ];
+  document.getElementById('abas').innerHTML = abas.map((a) => `
+    <button type="button" class="aba${estado.tela === a.tela ? ' ativa' : ''}" data-acao="ir" data-tela="${a.tela}"
+      aria-disabled="${a.desativada}" ${estado.tela === a.tela ? 'aria-current="page"' : ''}>${a.texto}</button>`).join('');
+
+  document.querySelectorAll('.seletor-modulo [data-modulo]').forEach((botao) => {
+    const modulo = Number(botao.dataset.modulo);
+    botao.setAttribute('aria-pressed', String(modulo === estado.modulo));
+    botao.classList.toggle('incluido', modulo < estado.modulo);
+  });
+
+  const acrescenta = estado.modulo === 1
+    ? 'A ficha chega preenchida e conferida, e o analista revisa, corrige e aprova.'
+    : 'Acrescenta a situação de cada mensagem Swift, os prazos D0 e D1, o resumo diário e o painel.';
+  document.getElementById('faixa-modulo').innerHTML = `<strong>${MODULOS[estado.modulo]}.</strong> ${acrescenta}`;
+}
+
+function desenhar() {
+  desenharAbas();
+  const tela = document.getElementById('tela');
+  tela.innerHTML = TELAS[BR.estado.tela]();
+  if (TELAS[BR.estado.tela].depois) TELAS[BR.estado.tela].depois();
+}
+
+/* Troca o estado e redesenha. Usado pelas ações e pelo teste do autor. */
+function definir(mudancas) {
+  Object.assign(BR.estado, mudancas);
+  desenhar();
+}
+BR.definir = definir;
+
+ACOES.ir = (alvo) => {
+  if (alvo.getAttribute('aria-disabled') === 'true') return;
+  definir({ tela: alvo.dataset.tela });
+  window.scrollTo(0, 0);
+};
+
+ACOES.modulo = (alvo) => definir({ modulo: Number(alvo.dataset.modulo) });
+
+function iniciar() {
+  iniciarDados();
+  document.addEventListener('click', (evento) => {
+    const alvo = evento.target.closest('[data-acao]');
+    if (!alvo || !ACOES[alvo.dataset.acao]) return;
+    if (alvo.tagName === 'A') evento.preventDefault();
+    ACOES[alvo.dataset.acao](alvo, evento);
+  });
+  document.addEventListener('keydown', (evento) => {
+    const alvo = evento.target.closest('tr[data-acao]');
+    if (alvo && (evento.key === 'Enter' || evento.key === ' ')) {
+      evento.preventDefault();
+      ACOES[alvo.dataset.acao](alvo, evento);
+    }
+  });
+  desenhar();
+}
+
+document.addEventListener('DOMContentLoaded', iniciar);
+
+/* Tela da fila de envelopes: o que chegou hoje, com o prazo, o banqueiro, o importador, o valor e a
+   situação de cada ficha. Clicar na linha abre o envelope. */
+
+const FILTROS_DA_FILA = [
+  { id: 'todas', texto: 'Todas' },
+  { id: 'novo', texto: 'Novas' },
+  { id: 'lido', texto: 'Lidas' },
+  { id: 'divergencia', texto: 'Com divergência' },
+  { id: 'aprovado', texto: 'Aprovadas' },
+];
+
+function textoOrigem(envelope) {
+  if (envelope.origem !== 'antecipada') return 'Envelope digitalizado';
+  if (envelope.ficha.vinculado) return 'Cópia digital antecipada, com o envelope vinculado';
+  return 'Cópia digital antecipada, envelope a vincular';
+}
+
+function celulaPrazo(envelope) {
+  const limite = limiteDoPrazo(envelope);
+  let nota = '';
+  if (envelope.situacao === 'aprovado') {
+    nota = prazoCumprido(envelope) ? '<span class="nota-ok">✓ cumprido</span>' : '<span class="nota-alerta">! vencido</span>';
+  } else if (limite === HOJE) {
+    nota = '<span class="nota-alerta">! vence hoje</span>';
+  }
+  return `<span class="prazo-tag">${envelope.prazo}</span> até ${dataCurta(limite)} ${nota}`;
+}
+
+function linhaDaFila(envelope) {
+  const d = envelope.documentos;
+  return `
+    <tr data-acao="abrir-envelope" data-id="${envelope.id}" tabindex="0">
+      <td class="mono">${envelope.id}</td>
+      <td class="numero">${dataHora(envelope.recebidoEm)}</td>
+      <td>${celulaPrazo(envelope)}</td>
+      <td>${esc(d.banqueiro)}</td>
+      <td>${esc(d.importador)}</td>
+      <td class="numero">${d.moeda} ${valorBR(d.valor)}</td>
+      <td class="celula-origem">${textoOrigem(envelope)}</td>
+      <td>${seloSituacao(envelope)}</td>
+    </tr>`;
+}
+
+TELAS.fila = function desenharFila() {
+  const { filtro } = BR.estado;
+  const ordenados = [...BR.envelopes].sort((a, b) => {
+    const prazoA = limiteDoPrazo(a); const prazoB = limiteDoPrazo(b);
+    if ((a.situacao === 'aprovado') !== (b.situacao === 'aprovado')) return a.situacao === 'aprovado' ? 1 : -1;
+    if (prazoA !== prazoB) return prazoA < prazoB ? -1 : 1;
+    return a.recebidoEm < b.recebidoEm ? -1 : 1;
+  });
+  const visiveis = ordenados.filter((e) => filtro === 'todas' || e.situacao === filtro);
+  const contagem = (id) => (id === 'todas' ? BR.envelopes.length : BR.envelopes.filter((e) => e.situacao === id).length);
+
+  return `
+    <section class="tela-fila" id="fila">
+      <div class="cabecalho-tela">
+        <div>
+          <p class="rotulo-secao">Hoje, ${dataLonga(HOJE)}</p>
+          <h1>Fila de envelopes</h1>
+          <p class="texto-apoio">A solução lê cada envelope salvo na pasta do Google Drive e abre uma ficha para ele. O analista abre a ficha, confere cada campo com o trecho de origem, resolve as divergências e aprova.</p>
+        </div>
+        <div class="filtros" role="group" aria-label="Filtrar a fila pela situação">
+          ${FILTROS_DA_FILA.map((f) => `<button type="button" class="filtro" data-acao="filtrar" data-filtro="${f.id}" aria-pressed="${filtro === f.id}">${f.texto} <span class="filtro-n">${contagem(f.id)}</span></button>`).join('')}
+        </div>
+      </div>
+      <div class="cartao rolagem-tabela">
+        <table class="tabela tabela-fila">
+          <thead><tr>
+            <th>Envelope</th><th>Recebimento</th><th>Prazo de registro</th><th>Banqueiro remetente</th>
+            <th>Importador</th><th>Valor</th><th>Origem</th><th>Situação</th>
+          </tr></thead>
+          <tbody>${visiveis.map(linhaDaFila).join('') || '<tr><td colspan="8" class="vazio">Nenhum envelope nesta situação.</td></tr>'}</tbody>
+        </table>
+      </div>
+      <p class="legenda">Prazo D0: registro no dia do recebimento. Prazo D1: registro no dia útil seguinte, e por isso o D1 de 19/11 cai em 23/11, depois do feriado nacional de 20/11.</p>
+    </section>`;
+};
+
+ACOES.filtrar = (alvo) => definir({ filtro: alvo.dataset.filtro });
+
+ACOES['abrir-envelope'] = (alvo) => {
+  const envelope = envelopePorId(alvo.dataset.id);
+  definir({
+    tela: 'envelope', envelopeId: envelope.id, documento: 'carta', campoAtivo: null, trechoAtivo: null,
+    passo: envelope.situacao === 'aprovado' ? 'aprovada' : 'campos',
+  });
+  window.scrollTo(0, 0);
+};
+
+/* Tela do envelope aberto. À esquerda, os documentos do envelope com aparência de digitalização; à
+   direita, a ficha em três passos: conferir os campos, resolver as divergências e aprovar. Clicar num
+   campo realça no documento o trecho de onde ele saiu. A ficha aprovada gera o aviso de cobrança, o
+   texto da mensagem Swift e a visão "Copiar para o Change". */
+
+// ---------------------------------------------------------------------------
+// Documentos do envelope, montados a partir dos dados fictícios
+// ---------------------------------------------------------------------------
+const trecho = (id, texto) => `<span class="trecho" data-trecho="${id}" data-acao="trecho-para-campo">${esc(texto)}</span>`;
+const linhaDoc = (conteudo, classe = '') => `<p class="doc-linha${classe ? ` ${classe}` : ''}">${conteudo}</p>`;
+
+/* O valor impresso num documento: o do envelope, salvo quando aquele documento traz uma variante. */
+function valorNoDocumento(envelope, doc, chave) {
+  const variante = envelope.variantes[doc];
+  return variante && chave in variante ? variante[chave] : envelope.documentos[chave];
+}
+
+function documentosDoEnvelope(envelope) {
+  const d = envelope.documentos;
+  const v = (doc, chave) => valorNoDocumento(envelope, doc, chave);
+  const dataDaCarta = paraIso(new Date(paraData(d.dataEmbarque).getTime() + 3 * 86400000));
+  const contraAceite = envelope.interpretacao.entrega === 'contra aceite';
+  const precoUnitario = d.valor / d.quantidade;
+
+  const carta = `
+    <div class="doc-topo"><span class="doc-emissor">${trecho('carta-banqueiro', d.banqueiro.toUpperCase())}</span><span>Trade Services · Collections</span></div>
+    <h4 class="doc-titulo">Documentary collection instruction</h4>
+    ${linhaDoc(`Date: ${dataEmIngles(dataDaCarta)}`)}
+    ${linhaDoc(`Our reference: ${trecho('carta-referencia', d.referencia)}`)}
+    ${linhaDoc('To: Banco Rendimento S.A., Collections Department, São Paulo, Brazil')}
+    ${linhaDoc(`Drawer: ${trecho('carta-exportador', d.exportador)}`)}
+    ${linhaDoc(`Drawee: ${trecho('carta-importador', d.importador)}`)}
+    ${linhaDoc(`Amount: ${trecho('carta-valor', `${d.moeda} ${valorEN(v('carta', 'valor'))}`)}`)}
+    <p class="doc-secao">Documents enclosed</p>
+    ${linhaDoc(`Commercial invoice No. ${trecho('carta-invoice', d.invoice)}, 2 pages`)}
+    ${linhaDoc(`Fatura No. ${d.fatura}`)}
+    ${linhaDoc(`Bill of lading No. ${d.conhecimento}, full set 3/3`)}
+    <p class="doc-secao">Instructions</p>
+    ${linhaDoc(trecho('carta-instrucao', d.instrucao), 'doc-texto-livre')}
+    <div class="doc-assinatura">Authorized signature</div>`;
+
+  const fatura = `
+    <div class="doc-topo"><span class="doc-emissor">${esc(d.exportador.toUpperCase())}</span><span>Fatura · Invoice statement</span></div>
+    <h4 class="doc-titulo">Fatura No. ${trecho('fatura-numero', d.fatura)}</h4>
+    ${linhaDoc(`Date: ${dataEmIngles(d.dataInvoice)}`)}
+    ${linhaDoc(`Sacado / Drawee: ${esc(d.importador)}`)}
+    ${linhaDoc(`Exportador / Drawer: ${esc(d.exportador)}`)}
+    ${linhaDoc(`Ref. commercial invoice: ${esc(d.invoice)}`)}
+    ${linhaDoc(`Valor total / Total amount: ${trecho('fatura-valor', `${d.moeda} ${valorEN(v('fatura', 'valor'))}`)}`, 'doc-destaque')}
+    ${linhaDoc(`Vencimento / Due: ${contraAceite ? '60 days after bill of lading date' : 'at sight'}`)}
+    <div class="doc-assinatura">Authorized signature</div>`;
+
+  const invoice1 = `
+    <div class="doc-topo"><span class="doc-emissor">${esc(d.exportador.toUpperCase())}</span><span>100 Example Road, Example City</span></div>
+    <h4 class="doc-titulo">Commercial invoice</h4>
+    ${linhaDoc(`Invoice No.: ${trecho('invoice-numero', d.invoice)}`)}
+    ${linhaDoc(`Date: ${trecho('invoice-data', dataEmIngles(d.dataInvoice))}`)}
+    ${linhaDoc(`Seller: ${esc(d.exportador)}`)}
+    ${linhaDoc(`Buyer: ${esc(d.importador)}, Brazil`)}
+    <table class="doc-tabela">
+      <tr><th>Description</th><th>Qty</th><th>Unit price</th><th>Amount</th></tr>
+      <tr><td>${esc(d.item)}</td><td>${d.quantidade}</td><td>${valorEN(precoUnitario)}</td><td>${valorEN(d.valor)}</td></tr>
+    </table>
+    ${linhaDoc(`Total: ${d.moeda} ${valorEN(v('invoice', 'valor'))}`, 'doc-destaque')}
+    ${linhaDoc('Payment terms: documentary collection')}`;
+
+  const invoice2 = `
+    <p class="doc-cabecalho-pagina">Commercial invoice ${esc(d.invoice)} · page 2 of 2</p>
+    <h4 class="doc-titulo">Shipment details</h4>
+    ${linhaDoc(`B/L No.: ${trecho('invoice-conhecimento', v('invoice', 'conhecimento'))}`)}
+    ${linhaDoc(`Port of loading: ${esc(d.portoEmbarque)}`)}
+    ${linhaDoc(`Port of discharge: ${esc(d.portoDestino)}, Brazil`)}
+    ${linhaDoc(`Incoterm: FOB ${esc(d.portoEmbarque)}`)}
+    ${linhaDoc('We certify this invoice to be true and correct.')}
+    <div class="doc-assinatura">Authorized signature</div>`;
+
+  const conhecimento = `
+    <div class="doc-topo"><span class="doc-emissor">EXAMPLE SHIPPING LINE</span><span>Original 1/3</span></div>
+    <h4 class="doc-titulo">Bill of lading</h4>
+    ${linhaDoc(`B/L No.: ${trecho('bl-numero', v('conhecimento', 'conhecimento'))}`)}
+    ${linhaDoc(`Shipper: ${esc(d.exportador)}`)}
+    ${linhaDoc(`Consignee: To order of ${esc(d.banqueiro)}`)}
+    ${linhaDoc(`Notify party: ${esc(d.importador)}`)}
+    ${linhaDoc('Vessel: MV Example Star · Voyage 26E')}
+    ${linhaDoc(`Port of loading: ${trecho('bl-porto-embarque', d.portoEmbarque)}`)}
+    ${linhaDoc(`Port of discharge: ${trecho('bl-porto-destino', d.portoDestino)}, Brazil`)}
+    ${linhaDoc(`Shipped on board: ${trecho('bl-data', dataEmIngles(d.dataEmbarque))}`)}
+    ${linhaDoc(`Description of goods: ${d.quantidade} units, ${esc(d.item)}`)}`;
+
+  const dhl = `
+    <div class="doc-topo"><span class="doc-emissor">DHL EXPRESS</span><span>Waybill ${trecho('dhl-numero', d.protocolo)}</span></div>
+    <h4 class="doc-titulo">Delivery receipt</h4>
+    ${linhaDoc(`From: ${esc(d.banqueiro)}, Trade Services`)}
+    ${linhaDoc('To: Banco Rendimento S.A., Collections, São Paulo')}
+    ${linhaDoc(`Contents: documents for collection, ref. ${trecho('dhl-referencia', d.referencia)}`)}
+    ${linhaDoc(`Enclosed: invoice, fatura, B/L ${trecho('dhl-conhecimento', v('dhl', 'conhecimento'))}`)}
+    ${linhaDoc(`Received on: ${trecho('dhl-recebimento', dataLonga(envelope.recebidoEm))} ${envelope.recebidoEm.slice(11, 16)}`)}
+    <div class="doc-rubrica">Recebido · Câmbio</div>`;
+
+  return [
+    { id: 'carta', paginas: [{ imagem: false, html: carta }] },
+    { id: 'fatura', paginas: [{ imagem: false, html: fatura }] },
+    { id: 'invoice', paginas: [{ imagem: false, html: invoice1 }, { imagem: false, html: invoice2 }] },
+    { id: 'conhecimento', paginas: [{ imagem: false, html: conhecimento }] },
+    { id: 'dhl', paginas: [{ imagem: true, html: dhl }] },
+  ];
+}
+
+/* A linha do documento em que o trecho aparece, com o trecho marcado. Serve aos dois lados de uma divergência. */
+function contextoDoTrecho(envelope, lado) {
+  const documento = documentosDoEnvelope(envelope).find((doc) => doc.id === lado.doc);
+  const molde = document.createElement('template');
+  molde.innerHTML = documento.paginas[lado.pagina - 1].html;
+  const alvo = molde.content.querySelector(`[data-trecho="${lado.trecho}"]`);
+  const linha = (alvo.closest('.doc-linha') || alvo.parentElement).cloneNode(true);
+  linha.querySelectorAll('[data-trecho]').forEach((span) => {
+    const novo = document.createElement(span.dataset.trecho === lado.trecho ? 'mark' : 'span');
+    novo.textContent = span.textContent;
+    span.replaceWith(novo);
+  });
+  return linha.innerHTML;
+}
+
+// ---------------------------------------------------------------------------
+// Visor dos documentos
+// ---------------------------------------------------------------------------
+function textoDaOrigemAtiva() {
+  const { campoAtivo, trechoAtivo, documento, paginaAtiva } = BR.estado;
+  if (campoAtivo) {
+    const origem = ORIGEM_DOS_CAMPOS[campoAtivo];
+    return `<span class="origem-rotulo">Origem do campo</span> <strong>${ROTULOS[campoAtivo]}</strong>: ${NOMES_DOS_DOCUMENTOS[origem.doc]}, p. ${origem.pagina}`;
+  }
+  if (trechoAtivo) return `<span class="origem-rotulo">Trecho realçado</span> ${NOMES_DOS_DOCUMENTOS[documento]}, p. ${paginaAtiva}`;
+  return '<span class="origem-rotulo">Origem</span> Clique num campo da ficha para realçar o trecho do documento de onde ele saiu.';
+}
+
+function desenharVisor(envelope) {
+  const documentos = documentosDoEnvelope(envelope);
+  const atual = documentos.find((doc) => doc.id === BR.estado.documento) || documentos[0];
+  const abas = documentos.map((doc) => `
+    <button type="button" class="visor-aba" role="tab" data-acao="ver-documento" data-doc="${doc.id}" aria-selected="${doc.id === atual.id}">
+      ${NOMES_DOS_DOCUMENTOS[doc.id]} <span class="visor-aba-paginas">${doc.paginas.length} p.</span>${doc.paginas.some((p) => p.imagem) ? ' <span class="tag-ocr">OCR</span>' : ''}
+    </button>`).join('');
+  const paginas = atual.paginas.map((pagina, indice) => `
+    <article class="pagina${pagina.imagem ? ' pagina-imagem' : ''}" data-pagina="${indice + 1}">
+      <header class="pagina-rotulo">
+        <span>${NOMES_DOS_DOCUMENTOS[atual.id]} · p. ${indice + 1} de ${atual.paginas.length}</span>
+        <span class="${pagina.imagem ? 'tag-ocr-longa' : 'tag-texto'}">${pagina.imagem ? 'página digitalizada como imagem · texto obtido por OCR' : 'texto lido do arquivo'}</span>
+      </header>
+      <div class="pagina-corpo">${pagina.html}</div>
+    </article>`).join('');
+  return `
+    <div class="visor-abas" role="tablist" aria-label="Documentos do envelope">${abas}</div>
+    <p class="visor-origem" id="visor-origem">${textoDaOrigemAtiva()}</p>
+    <div class="visor-paginas" id="visor-paginas">${paginas}</div>`;
+}
+
+/* Marca o trecho ativo e os trechos das divergências abertas, e rola o visor até o trecho ativo. */
+function aplicarRealces() {
+  const envelope = envelopeAberto();
+  const visor = document.getElementById('visor-paginas');
+  if (!envelope || !visor) return;
+  const divergentes = divergenciasAbertas(envelope).flatMap((div) => div.lados.map((lado) => lado.trecho));
+  let ativo = null;
+  visor.querySelectorAll('[data-trecho]').forEach((span) => {
+    const realcado = span.dataset.trecho === BR.estado.trechoAtivo;
+    span.classList.toggle('realce', realcado);
+    span.classList.toggle('trecho-divergente', divergentes.includes(span.dataset.trecho));
+    if (realcado) ativo = span;
+  });
+  if (ativo) {
+    const deslocamento = ativo.getBoundingClientRect().top - visor.getBoundingClientRect().top;
+    visor.scrollTop += deslocamento - visor.clientHeight / 3;
+  }
+}
+
+/* levarAoVisor: na tela estreita o visor fica acima da ficha, e o clique no nome do campo leva o
+   analista até o trecho. Focar o campo para editar não rola a tela. */
+function atualizarVisor(levarAoVisor = false) {
+  const envelope = envelopeAberto();
+  document.getElementById('visor').innerHTML = desenharVisor(envelope);
+  aplicarRealces();
+  if (levarAoVisor && window.innerWidth < 1100) document.getElementById('visor').scrollIntoView({ block: 'start' });
+}
+
+function verOrigem(campo, levarAoVisor = false) {
+  const origem = ORIGEM_DOS_CAMPOS[campo];
+  Object.assign(BR.estado, { campoAtivo: campo, documento: origem.doc, trechoAtivo: origem.trecho, paginaAtiva: origem.pagina });
+  atualizarVisor(levarAoVisor);
+  document.querySelectorAll('.campo').forEach((linha) => linha.classList.toggle('ativo', linha.dataset.campo === campo));
+}
+
+// ---------------------------------------------------------------------------
+// Ficha: campos, divergências, aprovação e ficha aprovada
+// ---------------------------------------------------------------------------
+function atualizarSituacao(envelope) {
+  if (envelope.situacao === 'aprovado' || envelope.situacao === 'novo') return;
+  envelope.situacao = divergenciasAbertas(envelope).length ? 'divergencia' : 'lido';
+}
+
+function marcaDoCampo(envelope, campo) {
+  const { ficha } = envelope;
+  const divergencia = envelope.divergencias.find((div) => div.campo === campo);
+  if (divergencia && !ficha.divergencias[divergencia.id].resolvida) return '<span class="marca marca-alerta">! divergência</span>';
+  if (campo === 'condicao') {
+    return `<span class="marca marca-modelo">modelo de linguagem · ${ficha.instrucaoConfirmada ? 'confirmada' : 'a confirmar'}</span>`;
+  }
+  if (ficha.campos[campo].valor !== ficha.campos[campo].lido) return '<span class="marca marca-analista">corrigido pelo analista</span>';
+  if (divergencia) return '<span class="marca marca-ok">✓ divergência resolvida</span>';
+  if (REGRAS.some((regra) => regra.campos.includes(campo))) return '<span class="marca marca-regra">✓ conferido por regra fixa</span>';
+  return '<span class="marca marca-lido">lido</span>';
+}
+
+function linhaDoCampo(envelope, campo) {
+  const origem = ORIGEM_DOS_CAMPOS[campo];
+  const divergencia = envelope.divergencias.find((div) => div.campo === campo);
+  const aberta = divergencia && !envelope.ficha.divergencias[divergencia.id].resolvida;
+  const classes = ['campo', BR.estado.campoAtivo === campo ? 'ativo' : '', aberta ? 'campo-divergente' : ''].filter(Boolean).join(' ');
+  return `
+    <div class="${classes}" data-campo="${campo}">
+      <button type="button" class="campo-cabeca" data-acao="ver-origem" data-campo="${campo}">
+        <span class="campo-rotulo">${ROTULOS[campo]}</span>
+        <span class="campo-fonte">${NOMES_DOS_DOCUMENTOS[origem.doc]} · p. ${origem.pagina}</span>
+      </button>
+      <input class="campo-entrada" data-campo-entrada="${campo}" value="${esc(envelope.ficha.campos[campo].valor)}"
+        aria-label="${ROTULOS[campo]}" ${envelope.situacao === 'aprovado' ? 'readonly' : ''}>
+      <span class="campo-marca" id="marca-${campo}">${marcaDoCampo(envelope, campo)}</span>
+    </div>`;
+}
+
+function desenharCampos(envelope) {
+  const grupos = ABAS_DO_CHANGE.map((aba, indice) => `
+    <fieldset class="grupo-change">
+      <legend><span class="rotulo-secao">Aba ${indice + 1} do Change</span> ${aba.nome}</legend>
+      ${aba.campos.map((campo) => linhaDoCampo(envelope, campo)).join('')}
+    </fieldset>`).join('');
+  const abertas = divergenciasAbertas(envelope).length;
+  let contagem = '';
+  if (abertas) contagem = abertas === 1 ? ' (1 aberta)' : ` (${abertas} abertas)`;
+  const proximo = envelope.situacao === 'aprovado'
+    ? ''
+    : `<button type="button" class="botao botao-principal" data-acao="passo" data-passo="divergencias">Seguir para as divergências${contagem}</button>`;
+  return `
+    <div class="painel-topo">
+      <h2>Ficha da operação</h2>
+      <p class="etiqueta-ilustrativa">Campos ilustrativos; os campos reais saem do inventário dos documentos.</p>
+    </div>
+    <ul class="legenda-origem">
+      <li><span class="amostra amostra-modelo" aria-hidden="true"></span>lido pelo modelo de linguagem, com OCR nas páginas de imagem</li>
+      <li><span class="amostra amostra-regra" aria-hidden="true"></span>conferido por regra fixa entre os documentos</li>
+      <li><span class="amostra amostra-analista" aria-hidden="true"></span>corrigido pelo analista</li>
+    </ul>
+    <p class="texto-apoio">Clique no nome de um campo para ver no documento o trecho de onde ele saiu. O analista pode corrigir qualquer valor antes de aprovar.</p>
+    ${grupos}
+    <div class="linha-acao">${proximo}</div>`;
+}
+
+function cartaoDivergencia(envelope, divergencia) {
+  const estado = envelope.ficha.divergencias[divergencia.id];
+  const regra = REGRAS.find((r) => r.id === divergencia.regra);
+  const lados = divergencia.lados.map((lado) => `
+    <button type="button" class="lado" data-acao="ver-trecho" data-doc="${lado.doc}" data-pagina="${lado.pagina}" data-trecho="${lado.trecho}">
+      <span class="lado-doc">${NOMES_DOS_DOCUMENTOS[lado.doc]} · p. ${lado.pagina}</span>
+      <span class="lado-trecho">${contextoDoTrecho(envelope, lado)}</span>
+    </button>`).join('');
+  const resolucao = estado.resolvida
+    ? `<p class="resolucao"><span class="sinal-ok" aria-hidden="true">✓</span> Resolvida: ${ROTULOS[divergencia.campo]} fica <span class="mono">${esc(estado.valor)}</span>.
+         <button type="button" class="botao-link" data-acao="reabrir" data-id="${divergencia.id}">Reabrir</button></p>`
+    : `<fieldset class="opcoes">
+         <legend>Valor que entra na ficha</legend>
+         ${divergencia.opcoes.map((opcao, indice) => `
+           <label class="opcao"><input type="radio" name="escolha-${divergencia.id}" value="${indice}"> ${opcao.rotulo}: <span class="mono">${opcao.valor}</span></label>`).join('')}
+         <label class="opcao opcao-corrigir"><input type="radio" name="escolha-${divergencia.id}" value="corrigir"> Corrigir:
+           <input type="text" class="entrada-correcao" data-correcao="${divergencia.id}" aria-label="Valor corrigido de ${ROTULOS[divergencia.campo]}"></label>
+       </fieldset>
+       <p class="erro-escolha" id="erro-${divergencia.id}" hidden>Escolha um dos valores ou escreva a correção.</p>
+       <button type="button" class="botao botao-secundario" data-acao="resolver" data-id="${divergencia.id}">Marcar como resolvida</button>`;
+  return `
+    <article class="cartao-divergencia${estado.resolvida ? ' resolvida' : ''}" data-divergencia="${divergencia.id}">
+      <header class="divergencia-topo">
+        <span class="etiqueta etiqueta-regra">regra fixa</span>
+        <h3>${regra.texto}</h3>
+        <span class="divergencia-estado">${estado.resolvida ? '✓ resolvida' : '! aberta'}</span>
+      </header>
+      <div class="lados">${lados}</div>
+      <p class="divergencia-leitura">${divergencia.leitura}</p>
+      ${resolucao}
+    </article>`;
+}
+
+function cartaoInstrucao(envelope) {
+  const { ficha, interpretacao } = envelope;
+  const confirmada = ficha.instrucaoConfirmada;
+  const acao = confirmada
+    ? '<button type="button" class="botao-link" data-acao="reabrir-instrucao">Rever a interpretação</button>'
+    : `<div class="linha-acao">
+         <label class="rotulo-select">Entrega dos documentos
+           <select data-entrega>${['contra pagamento', 'contra aceite'].map((o) => `<option${o === ficha.entrega ? ' selected' : ''}>${o}</option>`).join('')}</select>
+         </label>
+         <button type="button" class="botao botao-secundario" data-acao="confirmar-instrucao">Confirmar a interpretação</button>
+       </div>`;
+  return `
+    <article class="cartao-instrucao${confirmada ? ' confirmada' : ''}" id="instrucao">
+      <header class="divergencia-topo">
+        <span class="etiqueta etiqueta-modelo">modelo de linguagem</span>
+        <h3>Instrução da carta remessa em texto livre</h3>
+        <span class="divergencia-estado">${confirmada ? '✓ confirmada' : 'a confirmar'}</span>
+      </header>
+      <button type="button" class="lado lado-largo" data-acao="ver-trecho" data-doc="carta" data-pagina="1" data-trecho="carta-instrucao">
+        <span class="lado-doc">Carta remessa · p. 1</span>
+        <span class="lado-trecho texto-livre">${esc(envelope.documentos.instrucao)}</span>
+      </button>
+      <dl class="interpretacao">
+        <div><dt>Entrega dos documentos</dt><dd>${ficha.entrega}</dd></div>
+        <div><dt>Despesas de cobrança</dt><dd>${interpretacao.despesas}</dd></div>
+        ${interpretacao.observacao ? `<div><dt>Outras instruções</dt><dd>${interpretacao.observacao}</dd></div>` : ''}
+      </dl>
+      ${acao}
+      <p class="legenda">A conferência entre os documentos usa regras fixas, e o modelo de linguagem atua apenas na interpretação desta instrução.</p>
+    </article>`;
+}
+
+function desenharDivergencias(envelope) {
+  const regrasQueDivergiram = new Set(envelope.divergencias.map((div) => div.regra));
+  const lista = REGRAS.map((regra) => {
+    const diverge = regrasQueDivergiram.has(regra.id);
+    return `<li class="${diverge ? 'regra-diverge' : 'regra-confere'}"><span class="regra-sinal" aria-hidden="true">${diverge ? '!' : '✓'}</span>${regra.texto}</li>`;
+  }).join('');
+  const confere = REGRAS.length - regrasQueDivergiram.size;
+  const proximo = envelope.situacao === 'aprovado'
+    ? ''
+    : '<div class="linha-acao"><button type="button" class="botao botao-principal" data-acao="passo" data-passo="aprovacao">Seguir para a aprovação</button></div>';
+  return `
+    <div class="painel-topo">
+      <h2>Divergências e instrução da carta remessa</h2>
+      <p class="etiqueta-ilustrativa">Regras e divergências ilustrativas; as regras reais saem do mapa de cobertura dos documentos.</p>
+    </div>
+    <details class="regras" ${regrasQueDivergiram.size ? '' : 'open'}>
+      <summary>${REGRAS.length} conferências por regra fixa: ${confere} conferiram e ${regrasQueDivergiram.size} divergiram na leitura</summary>
+      <ul class="lista-regras">${lista}</ul>
+    </details>
+    ${envelope.divergencias.map((div) => cartaoDivergencia(envelope, div)).join('')}
+    ${cartaoInstrucao(envelope)}
+    ${proximo}`;
+}
+
+function resumoDaFicha(envelope) {
+  return ABAS_DO_CHANGE.map((aba) => `
+    <div class="resumo-aba"><p class="rotulo-secao">${aba.nome}</p>
+      <dl>${aba.campos.map((c) => `<div class="par"><dt>${ROTULOS[c]}</dt><dd>${esc(envelope.ficha.campos[c].valor)}</dd></div>`).join('')}</dl>
+    </div>`).join('');
+}
+
+function desenharAprovacao(envelope) {
+  const pendencias = pendenciasDaAprovacao(envelope);
+  const situacao = pendencias.length
+    ? `<ul class="pendencias">${pendencias.map((p) => `<li><span class="sinal-alerta" aria-hidden="true">!</span> ${p}</li>`).join('')}</ul>
+       <p class="legenda" id="motivo-bloqueio">A aprovação fica bloqueada enquanto houver pendência.</p>`
+    : '<p class="sem-pendencia"><span class="sinal-ok" aria-hidden="true">✓</span> Nenhuma pendência: a ficha pode ser aprovada.</p>';
+  return `
+    <div class="painel-topo"><h2>Aprovar a ficha</h2></div>
+    <div class="cartao-aprovar">
+      ${situacao}
+      <p class="texto-apoio">Ao aprovar, a ficha entra na base das cobranças com o horário de cada passo e o analista responsável, e a tela gera o aviso de cobrança ao cliente e o texto da mensagem Swift ao banqueiro.</p>
+      <button type="button" class="botao botao-principal" id="botao-aprovar" data-acao="aprovar"
+        ${pendencias.length ? 'disabled aria-describedby="motivo-bloqueio"' : ''}>Aprovar a ficha</button>
+    </div>
+    <h3 class="titulo-bloco">Ficha que será aprovada</h3>
+    <div class="resumo-ficha">${resumoDaFicha(envelope)}</div>`;
+}
+
+// ---------------------------------------------------------------------------
+// Textos gerados a partir da ficha aprovada
+// ---------------------------------------------------------------------------
+function textoDoAviso(envelope) {
+  const c = (campo) => envelope.ficha.campos[campo].valor;
+  const contraAceite = envelope.ficha.entrega === 'contra aceite';
+  return [
+    `Assunto: Aviso de cobrança de importação · ref. ${c('referencia')}`,
+    '',
+    `Prezados, ${c('importador')},`,
+    '',
+    `Informamos o recebimento, em ${c('recebimento')}, dos documentos da cobrança de importação abaixo, enviados pelo ${c('banqueiro')}.`,
+    '',
+    `Exportador: ${c('exportador')}`,
+    `Valor: ${c('moeda')} ${c('valor')}`,
+    `Invoice: ${c('invoice')}`,
+    `Conhecimento de embarque: ${c('conhecimento')}`,
+    `Condição: entrega dos documentos ${envelope.ficha.entrega}`,
+    `Despesas de cobrança: ${envelope.interpretacao.despesas}`,
+    '',
+    contraAceite
+      ? 'Os documentos serão entregues mediante o aceite do saque. Para combinar o aceite e a retirada, responda a esta mensagem.'
+      : 'Os documentos serão entregues mediante o pagamento da cobrança. Para combinar o pagamento e a retirada, responda a esta mensagem.',
+    '',
+    'Banco Rendimento · Cobrança de Importação',
+  ].join('\n');
+}
+
+function textoDaSwift(envelope) {
+  const c = (campo) => semAcento(envelope.ficha.campos[campo].valor).toUpperCase();
+  const valor = envelope.ficha.campos.valor.valor.replace(/\./g, '').replace(',', '.');
+  const condicao = envelope.ficha.entrega === 'contra aceite' ? 'DOCUMENTS AGAINST ACCEPTANCE (D/A)' : 'DOCUMENTS AGAINST PAYMENT (D/P)';
+  return [
+    `TO: ${c('banqueiro')}`,
+    'FROM: BANCO RENDIMENTO S.A., SAO PAULO',
+    `RE: YOUR COLLECTION REF. ${c('referencia')}`,
+    `OUR REF.: ${envelope.id}`,
+    '',
+    `WE ACKNOWLEDGE RECEIPT OF YOUR COLLECTION DOCUMENTS ON ${dataSwift(envelope.recebidoEm)}.`,
+    `DRAWER: ${c('exportador')}`,
+    `DRAWEE: ${c('importador')}`,
+    `AMOUNT: ${c('moeda')} ${valorEN(Number(valor))}`,
+    `INVOICE: ${c('invoice')}`,
+    `TERMS: ${condicao}`,
+    '',
+    'THE DRAWEE HAS BEEN ADVISED. WE WILL REVERT UPON SETTLEMENT.',
+  ].join('\n');
+}
+
+function textoDaAbaDoChange(envelope, abaId) {
+  const aba = ABAS_DO_CHANGE.find((a) => a.id === abaId);
+  return aba.campos.map((c) => `${ROTULOS[c]}: ${envelope.ficha.campos[c].valor}`).join('\n');
+}
+
+function blocoAcompanhamento(envelope) {
+  if (BR.estado.modulo < 2) {
+    return `
+      <section class="bloco-indisponivel" data-bloco="acompanhamento-da-ficha" data-estado="indisponivel">
+        <span class="etiqueta-modulo">entra no Módulo 2</span>
+        <p>O acompanhamento registra a data do aviso ao cliente, a situação da mensagem Swift e a resposta do banqueiro, e mede o prazo D0 ou D1 desta cobrança.</p>
+      </section>`;
+  }
+  const { swift } = envelope;
+  const cumprido = prazoCumprido(envelope);
+  const aviso = envelope.avisoEm
+    ? `registrado pelo analista em ${dataHora(envelope.avisoEm)}`
+    : '<button type="button" class="botao botao-secundario" data-acao="registrar-aviso">Registrar o envio do aviso</button>';
+  let mensagem = '<button type="button" class="botao botao-secundario" data-acao="registrar-swift">Registrar o envio pelo Alliance</button>';
+  if (swift.situacao === 'aguardando') mensagem = `enviada pelo analista em ${dataHora(swift.enviadaEm)}, aguardando resposta`;
+  if (swift.situacao === 'respondida') mensagem = `respondida em ${dataHora(swift.resposta.em)}: ${esc(swift.resposta.tipo)}`;
+  return `
+    <section class="cartao-saida" data-bloco="acompanhamento-da-ficha" data-estado="ativo">
+      <header class="saida-topo"><h3>Acompanhamento desta cobrança</h3><span class="etiqueta-m2">Módulo 2</span></header>
+      <dl class="acomp-ficha">
+        <div><dt>Prazo de registro</dt><dd>${textoPrazo(envelope)} · ${cumprido ? '<span class="nota-ok">✓ cumprido</span>' : '<span class="nota-alerta">! vencido</span>'}</dd></div>
+        <div><dt>Aviso ao cliente</dt><dd>${aviso}</dd></div>
+        <div><dt>Mensagem Swift</dt><dd>${mensagem}</dd></div>
+      </dl>
+      <button type="button" class="botao-link" data-acao="ir" data-tela="acompanhamento">Ver no acompanhamento</button>
+    </section>`;
+}
+
+function desenharAprovada(envelope) {
+  const abas = ABAS_DO_CHANGE.map((aba, indice) => `
+    <div class="aba-change">
+      <div class="aba-change-topo">
+        <span><span class="rotulo-secao">Aba ${indice + 1}</span> ${aba.nome}</span>
+        <button type="button" class="botao-copiar" data-acao="copiar" data-copiar="change-${aba.id}">Copiar a aba</button>
+      </div>
+      <dl>${aba.campos.map((c) => `
+        <div class="par"><dt>${ROTULOS[c]}</dt><dd class="mono">${esc(envelope.ficha.campos[c].valor)}</dd>
+          <button type="button" class="botao-copiar-mini" data-acao="copiar" data-copiar="campo-${c}" aria-label="Copiar ${ROTULOS[c]}">Copiar</button></div>`).join('')}
+      </dl>
+    </div>`).join('');
+  const registro = envelope.ficha.registro.map((r) => `<li><span class="mono">${dataHora(r.em)}</span> ${esc(r.texto)}</li>`).join('');
+  return `
+    <div class="faixa-aprovada"><span class="sinal-ok" aria-hidden="true">✓</span> Ficha aprovada em ${dataHora(envelope.aprovadoEm)} pelo analista de câmbio.</div>
+    <section class="cartao-saida" id="saida-change">
+      <header class="saida-topo"><h3>Copiar para o Change</h3></header>
+      <p class="texto-apoio">O analista copia os dados para o Change na ordem das três abas. O projeto não altera nem integra o Change.</p>
+      ${abas}
+    </section>
+    <section class="cartao-saida" id="saida-aviso">
+      <header class="saida-topo"><h3>Aviso de cobrança ao cliente</h3>
+        <button type="button" class="botao botao-secundario" data-acao="copiar" data-copiar="aviso">Copiar o aviso</button></header>
+      <pre class="texto-gerado" id="texto-aviso">${esc(textoDoAviso(envelope))}</pre>
+      <p class="legenda">O analista envia o aviso ao cliente pelo canal que a área de câmbio já usa.</p>
+    </section>
+    <section class="cartao-saida" id="saida-swift">
+      <header class="saida-topo"><h3>Texto da mensagem Swift ao banqueiro</h3>
+        <button type="button" class="botao botao-secundario" data-acao="copiar" data-copiar="swift">Copiar o texto</button></header>
+      <pre class="texto-gerado texto-swift" id="texto-swift">${esc(textoDaSwift(envelope))}</pre>
+      <p class="legenda">O analista cola o texto no Alliance e envia a mensagem ao banqueiro.</p>
+    </section>
+    ${blocoAcompanhamento(envelope)}
+    <section class="cartao-saida">
+      <header class="saida-topo"><h3>Registro da ficha na base das cobranças</h3></header>
+      <ol class="registro">${registro}</ol>
+    </section>`;
+}
+
+// ---------------------------------------------------------------------------
+// Tela inteira
+// ---------------------------------------------------------------------------
+function desenharPassos(envelope) {
+  const aprovado = envelope.situacao === 'aprovado';
+  const abertas = divergenciasAbertas(envelope).length;
+  let notaDivergencias = '✓';
+  if (abertas) notaDivergencias = abertas === 1 ? '1 aberta' : `${abertas} abertas`;
+  else if (!envelope.ficha.instrucaoConfirmada) notaDivergencias = 'instrução a confirmar';
+  const passos = [
+    { id: 'campos', texto: 'Conferir os campos', nota: '' },
+    { id: 'divergencias', texto: 'Resolver as divergências', nota: notaDivergencias },
+    { id: aprovado ? 'aprovada' : 'aprovacao', texto: aprovado ? 'Ficha aprovada' : 'Aprovar e gerar os textos', nota: aprovado ? '✓' : '' },
+  ];
+  return `<ol class="passos">${passos.map((p, i) => `
+    <li><button type="button" class="passo" data-acao="passo" data-passo="${p.id}" aria-current="${BR.estado.passo === p.id ? 'step' : 'false'}">
+      <span class="passo-n">${i + 1}</span>${p.texto}${p.nota ? ` <span class="passo-nota">${p.nota}</span>` : ''}</button></li>`).join('')}</ol>`;
+}
+
+function avisosDoEnvelope(envelope) {
+  const avisos = [];
+  if (envelope.situacao === 'novo') {
+    avisos.push(`
+      <div class="aviso aviso-neutro">
+        <p>A leitura deste envelope ainda está em andamento. Os documentos já estão na pasta, e a ficha aparece preenchida quando a leitura terminar.</p>
+        <button type="button" class="botao botao-secundario" data-acao="simular-leitura">Simular o fim da leitura</button>
+      </div>`);
+  }
+  if (envelope.origem === 'antecipada') {
+    const chegada = envelope.envelopeDigitalizado;
+    avisos.push(envelope.ficha.vinculado
+      ? `<div class="aviso aviso-ok" id="aviso-vinculo"><p><span class="sinal-ok" aria-hidden="true">✓</span> O envelope digitalizado em ${dataHora(chegada.chegouEm)} foi vinculado a esta ficha em ${dataHora(envelope.ficha.vinculadoEm)}. A cobrança continua com uma ficha só, e o analista confere o original contra ela.</p></div>`
+      : `<div class="aviso aviso-atencao" id="aviso-vinculo">
+           <p>Esta ficha foi aberta pela cópia digital antecipada que o banqueiro enviou e o analista salvou na pasta. O envelope físico foi digitalizado em ${dataHora(chegada.chegouEm)}, com ${chegada.arquivos} arquivos, e precisa ser vinculado a esta ficha para que a solução não abra uma segunda ficha da mesma cobrança.</p>
+           <button type="button" class="botao botao-secundario" data-acao="vincular">Vincular o envelope digitalizado a esta ficha</button>
+         </div>`);
+  }
+  return avisos.join('');
+}
+
+function painelDoPasso(envelope) {
+  if (envelope.situacao === 'novo') {
+    return '<div class="painel-topo"><h2>Ficha da operação</h2></div><p class="texto-apoio">Os campos aparecem aqui quando a leitura terminar.</p>';
+  }
+  const desenhos = { campos: desenharCampos, divergencias: desenharDivergencias, aprovacao: desenharAprovacao, aprovada: desenharAprovada };
+  return desenhos[BR.estado.passo](envelope);
+}
+
+TELAS.envelope = function desenharEnvelope() {
+  const envelope = envelopeAberto();
+  if (!envelope) return '<p class="texto-apoio">Abra um envelope na fila.</p>';
+  const d = envelope.documentos;
+  return `
+    <section class="tela-envelope" id="envelope" data-envelope="${envelope.id}">
+      <div class="cabecalho-envelope">
+        <button type="button" class="botao-link" data-acao="ir" data-tela="fila">← Fila de envelopes</button>
+        <div class="titulo-envelope"><h1><span class="mono">${envelope.id}</span> ${esc(d.importador)}</h1>${seloSituacao(envelope)}</div>
+        <p class="meta-envelope">${esc(d.banqueiro)} · ${d.moeda} ${valorBR(d.valor)} · recebido em ${dataHora(envelope.recebidoEm)} · prazo de registro ${textoPrazo(envelope)}</p>
+      </div>
+      ${avisosDoEnvelope(envelope)}
+      ${envelope.situacao === 'novo' ? '' : desenharPassos(envelope)}
+      <div class="envelope-grade">
+        <section class="visor" id="visor" aria-label="Documentos do envelope">${desenharVisor(envelope)}</section>
+        <section class="painel-ficha" id="painel-ficha" aria-label="Ficha da operação">${painelDoPasso(envelope)}</section>
+      </div>
+    </section>`;
+};
+TELAS.envelope.depois = aplicarRealces;
+
+// ---------------------------------------------------------------------------
+// Ações do analista
+// ---------------------------------------------------------------------------
+ACOES.passo = (alvo) => {
+  definir({ passo: alvo.dataset.passo });
+  document.getElementById('painel-ficha').scrollIntoView({ block: 'nearest' });
+};
+
+ACOES['ver-documento'] = (alvo) => {
+  Object.assign(BR.estado, { documento: alvo.dataset.doc, campoAtivo: null, trechoAtivo: null });
+  atualizarVisor();
+  document.querySelectorAll('.campo').forEach((linha) => linha.classList.remove('ativo'));
+};
+
+ACOES['ver-origem'] = (alvo) => verOrigem(alvo.dataset.campo, true);
+
+ACOES['ver-trecho'] = (alvo) => {
+  Object.assign(BR.estado, { documento: alvo.dataset.doc, trechoAtivo: alvo.dataset.trecho, paginaAtiva: Number(alvo.dataset.pagina), campoAtivo: null });
+  atualizarVisor(true);
+};
+
+/* Clicar num trecho do documento leva ao campo que saiu dele, quando a ficha está no passo dos campos. */
+ACOES['trecho-para-campo'] = (alvo) => {
+  const campo = Object.keys(ORIGEM_DOS_CAMPOS).find((c) => ORIGEM_DOS_CAMPOS[c].trecho === alvo.dataset.trecho);
+  if (!campo || BR.estado.passo !== 'campos') return;
+  verOrigem(campo);
+  document.querySelector(`.campo[data-campo="${campo}"]`).scrollIntoView({ block: 'nearest' });
+};
+
+ACOES.resolver = (alvo) => {
+  const envelope = envelopeAberto();
+  const divergencia = envelope.divergencias.find((d) => d.id === alvo.dataset.id);
+  const marcada = document.querySelector(`input[name="escolha-${divergencia.id}"]:checked`);
+  let valor = null;
+  if (marcada && marcada.value === 'corrigir') valor = document.querySelector(`[data-correcao="${divergencia.id}"]`).value.trim() || null;
+  else if (marcada) valor = divergencia.opcoes[Number(marcada.value)].valor;
+  if (!valor) {
+    document.getElementById(`erro-${divergencia.id}`).hidden = false;
+    return;
+  }
+  envelope.ficha.divergencias[divergencia.id] = { resolvida: true, valor };
+  envelope.ficha.campos[divergencia.campo].valor = valor;
+  envelope.ficha.registro.push({ em: agora(), texto: `Divergência resolvida: ${ROTULOS[divergencia.campo]} = ${valor}` });
+  atualizarSituacao(envelope);
+  definir({ trechoAtivo: null, campoAtivo: null });
+};
+
+ACOES.reabrir = (alvo) => {
+  const envelope = envelopeAberto();
+  const divergencia = envelope.divergencias.find((d) => d.id === alvo.dataset.id);
+  envelope.ficha.divergencias[divergencia.id] = { resolvida: false, valor: null };
+  envelope.ficha.campos[divergencia.campo].valor = envelope.ficha.campos[divergencia.campo].lido;
+  atualizarSituacao(envelope);
+  desenhar();
+};
+
+ACOES['confirmar-instrucao'] = () => {
+  const envelope = envelopeAberto();
+  const entrega = document.querySelector('[data-entrega]').value;
+  Object.assign(envelope.ficha, { entrega, instrucaoConfirmada: true });
+  envelope.ficha.campos.condicao.valor = `Entrega dos documentos ${entrega}`;
+  envelope.ficha.registro.push({ em: agora(), texto: `Instrução da carta remessa confirmada: entrega ${entrega}` });
+  desenhar();
+};
+
+ACOES['reabrir-instrucao'] = () => {
+  envelopeAberto().ficha.instrucaoConfirmada = false;
+  desenhar();
+};
+
+ACOES.aprovar = () => {
+  const envelope = envelopeAberto();
+  if (pendenciasDaAprovacao(envelope).length) return; // o botão já vem desativado; isto é a segunda proteção
+  envelope.situacao = 'aprovado';
+  envelope.aprovadoEm = agora();
+  envelope.avisoEm = null;
+  envelope.swift = { situacao: 'a-enviar', enviadaEm: null, resposta: null };
+  envelope.ficha.registro.push({ em: envelope.aprovadoEm, texto: 'Ficha aprovada pelo analista de câmbio; aviso de cobrança e texto da mensagem Swift gerados' });
+  definir({ passo: 'aprovada', trechoAtivo: null, campoAtivo: null });
+  window.scrollTo(0, 0);
+};
+
+ACOES.copiar = (alvo) => {
+  const envelope = envelopeAberto();
+  const qual = alvo.dataset.copiar;
+  if (qual === 'aviso') copiar(textoDoAviso(envelope), 'Aviso de cobrança');
+  else if (qual === 'swift') copiar(textoDaSwift(envelope), 'Texto da mensagem Swift');
+  else if (qual.startsWith('change-')) copiar(textoDaAbaDoChange(envelope, qual.slice(7)), 'Dados da aba');
+  else if (qual.startsWith('campo-')) copiar(envelope.ficha.campos[qual.slice(6)].valor, ROTULOS[qual.slice(6)]);
+};
+
+ACOES.vincular = () => {
+  const envelope = envelopeAberto();
+  envelope.ficha.vinculado = true;
+  envelope.ficha.vinculadoEm = agora();
+  envelope.ficha.registro.push({ em: envelope.ficha.vinculadoEm, texto: 'Envelope digitalizado vinculado à ficha aberta pela cópia antecipada' });
+  desenhar();
+};
+
+ACOES['simular-leitura'] = () => {
+  const envelope = envelopeAberto();
+  envelope.situacao = 'lido';
+  envelope.ficha.registro.push({ em: agora(), texto: 'Leitura e conferência concluídas' });
+  definir({ passo: 'campos' });
+};
+
+ACOES['registrar-aviso'] = () => {
+  const envelope = envelopeAberto();
+  envelope.avisoEm = agora();
+  envelope.ficha.registro.push({ em: envelope.avisoEm, texto: 'Envio do aviso ao cliente registrado pelo analista' });
+  desenhar();
+};
+
+ACOES['registrar-swift'] = () => {
+  const envelope = envelopeAberto();
+  envelope.swift = { situacao: 'aguardando', enviadaEm: agora(), resposta: null };
+  envelope.ficha.registro.push({ em: envelope.swift.enviadaEm, texto: 'Envio da mensagem Swift pelo Alliance registrado pelo analista' });
+  desenhar();
+};
+
+// Editar um campo atualiza a ficha sem redesenhar a tela, para o cursor não sair do campo
+document.addEventListener('input', (evento) => {
+  const entrada = evento.target.closest('[data-campo-entrada]');
+  if (!entrada) return;
+  const envelope = envelopeAberto();
+  const campo = entrada.dataset.campoEntrada;
+  envelope.ficha.campos[campo].valor = entrada.value;
+  document.getElementById(`marca-${campo}`).innerHTML = marcaDoCampo(envelope, campo);
+});
+
+document.addEventListener('focusin', (evento) => {
+  const entrada = evento.target.closest('[data-campo-entrada]');
+  if (entrada && BR.estado.campoAtivo !== entrada.dataset.campoEntrada) verOrigem(entrada.dataset.campoEntrada);
+  const correcao = evento.target.closest('[data-correcao]');
+  if (correcao) document.querySelector(`input[name="escolha-${correcao.dataset.correcao}"][value="corrigir"]`).checked = true;
+});
+
+/* Tela de acompanhamento, que só existe no Módulo 2: a situação de cada mensagem Swift, o prazo D0 ou
+   D1 de cada cobrança, o registro da resposta do banqueiro, a prévia do resumo diário e o painel com
+   os prazos cumpridos e o tempo de cada envelope do recebimento ao aviso ao cliente. */
+
+const SITUACOES_SWIFT = {
+  'a-enviar': { texto: 'A enviar', classe: 'sit-lido', sinal: '●' },
+  aguardando: { texto: 'Aguardando resposta', classe: 'sit-novo', sinal: '○' },
+  respondida: { texto: 'Respondida', classe: 'sit-aprovado', sinal: '✓' },
+};
+
+/* Dias úteis completos desde o envio até hoje, para saber há quanto tempo o banqueiro não responde. */
+function diasUteisDesde(iso) {
+  const data = paraData(diaDe(iso));
+  const hoje = paraData(HOJE);
+  let dias = 0;
+  while (data < hoje) {
+    data.setDate(data.getDate() + 1);
+    if (ehDiaUtil(data)) dias += 1;
+  }
+  return dias;
+}
+
+function seloSwift(swift) {
+  const s = SITUACOES_SWIFT[swift.situacao];
+  const espera = swift.situacao === 'aguardando' ? ` · ${diasUteisDesde(swift.enviadaEm)} d úteis` : '';
+  return `<span class="situacao ${s.classe}"><span class="situacao-sinal" aria-hidden="true">${s.sinal}</span>${s.texto}${espera}</span>`;
+}
+
+function linhaDoAcompanhamento(cobranca) {
+  const cumprido = prazoCumprido(cobranca);
+  const { resposta } = cobranca.swift;
+  const textoResposta = resposta
+    ? `${dataHora(resposta.em)} · ${esc(resposta.tipo)}${resposta.observacao ? `<span class="observacao">${esc(resposta.observacao)}</span>` : ''}`
+    : '<span class="vazio-celula">sem resposta</span>';
+  return `
+    <tr data-linha="${cobranca.id}">
+      <td class="mono">${cobranca.id}</td>
+      <td>${esc(cobranca.importador)}</td>
+      <td>${esc(cobranca.banqueiro)}</td>
+      <td class="numero">${dataHora(cobranca.recebidoEm)}</td>
+      <td><span class="prazo-tag">${cobranca.prazo}</span> até ${dataCurta(limiteDoPrazo(cobranca))} ${cumprido ? '<span class="nota-ok">✓ cumprido</span>' : '<span class="nota-alerta">! vencido</span>'}</td>
+      <td class="numero">${cobranca.avisoEm ? dataHora(cobranca.avisoEm) : '<span class="nota-alerta">! a registrar</span>'}</td>
+      <td>${seloSwift(cobranca.swift)}</td>
+      <td class="celula-resposta" data-resposta>${textoResposta}</td>
+    </tr>`;
+}
+
+function desenharFormulario(cobrancas) {
+  const aguardando = cobrancas.filter((c) => c.swift.situacao === 'aguardando');
+  if (!aguardando.length) return '<p class="texto-apoio">Nenhuma mensagem Swift aguarda resposta do banqueiro.</p>';
+  return `
+    <form class="formulario" id="form-resposta">
+      <label>Cobrança
+        <select name="cobranca">${aguardando.map((c) => `<option value="${c.id}">${c.id} · ${esc(c.banqueiro)}</option>`).join('')}</select>
+      </label>
+      <label>Resposta do banqueiro
+        <select name="tipo">${TIPOS_DE_RESPOSTA.map((t) => `<option>${t}</option>`).join('')}</select>
+      </label>
+      <label>Observação
+        <input type="text" name="observacao" maxlength="120" autocomplete="off">
+      </label>
+      <button type="submit" class="botao botao-principal">Registrar na ficha</button>
+    </form>
+    <p class="legenda">A resposta chega pelo Alliance, e o analista a registra aqui, porque a leitura das mensagens do Alliance depende de integração com o sistema.</p>`;
+}
+
+function itemDoResumo(quantidade, singular, plural, ids) {
+  const texto = quantidade === 1 ? singular : plural.replace('{n}', quantidade);
+  const lista = ids.length ? `: <span class="mono">${ids.join(', ')}</span>` : '';
+  return `<li${quantidade ? ' class="tem-pendencia"' : ''}>${texto}${lista}</li>`;
+}
+
+function desenharResumoDiario(cobrancas) {
+  const naFila = BR.envelopes.filter((e) => e.situacao !== 'aprovado');
+  const ids = (lista) => lista.map((c) => c.id);
+  const vencemHoje = naFila.filter((e) => limiteDoPrazo(e) === HOJE);
+  const comDivergencia = naFila.filter((e) => e.situacao === 'divergencia');
+  const aRevisar = naFila.filter((e) => e.situacao === 'lido' || e.situacao === 'novo');
+  const avisos = cobrancas.filter((c) => !c.avisoEm);
+  const aEnviar = cobrancas.filter((c) => c.swift.situacao === 'a-enviar');
+  const semResposta = cobrancas.filter((c) => c.swift.situacao === 'aguardando' && diasUteisDesde(c.swift.enviadaEm) >= 2);
+  return `
+    <div class="resumo-diario" id="resumo-diario">
+      <p class="resumo-cabecalho"><span class="mono">Para: equipe de câmbio</span><span class="mono">${dataLonga(HOJE)}</span></p>
+      <p class="resumo-assunto">Resumo diário das pendências da Cobrança de Importação</p>
+      <ul>
+        ${itemDoResumo(vencemHoje.length, '1 ficha com prazo de registro vencendo hoje', '{n} fichas com prazo de registro vencendo hoje', ids(vencemHoje))}
+        ${itemDoResumo(comDivergencia.length, '1 ficha com divergência aberta', '{n} fichas com divergência aberta', ids(comDivergencia))}
+        ${itemDoResumo(aRevisar.length, '1 ficha aguardando a revisão do analista', '{n} fichas aguardando a revisão do analista', ids(aRevisar))}
+        ${itemDoResumo(avisos.length, '1 aviso ao cliente a registrar', '{n} avisos ao cliente a registrar', ids(avisos))}
+        ${itemDoResumo(aEnviar.length, '1 mensagem Swift a enviar', '{n} mensagens Swift a enviar', ids(aEnviar))}
+        ${itemDoResumo(semResposta.length, '1 mensagem Swift sem resposta há 2 dias úteis ou mais', '{n} mensagens Swift sem resposta há 2 dias úteis ou mais', ids(semResposta))}
+      </ul>
+    </div>
+    <p class="legenda">O resumo é enviado todo dia à equipe de câmbio pelo e-mail ou pelo chat que ela indicar. O limite de 2 dias úteis é ilustrativo.</p>`;
+}
+
+function mediana(valores) {
+  const ordenados = [...valores].sort((a, b) => a - b);
+  const meio = Math.floor(ordenados.length / 2);
+  return ordenados.length % 2 ? ordenados[meio] : Math.round((ordenados[meio - 1] + ordenados[meio]) / 2);
+}
+
+/* Barras horizontais em SVG: o tempo corrido de cada envelope, do recebimento ao aviso ao cliente. */
+function graficoDeTempo(tempos) {
+  const alturaDaLinha = 28;
+  const larguraDaBarra = 360;
+  const inicioDaBarra = 88;
+  const maior = Math.max(...tempos.map((t) => t.minutos));
+  const altura = tempos.length * alturaDaLinha + 8;
+  const linhas = tempos.map((t, i) => {
+    const y = i * alturaDaLinha + 4;
+    const largura = Math.max(3, Math.round((t.minutos / maior) * larguraDaBarra));
+    return `
+      <text class="grafico-rotulo" x="0" y="${y + 17}">${t.id}</text>
+      <rect class="${t.vencido ? 'barra barra-vencida' : 'barra'}" x="${inicioDaBarra}" y="${y + 5}" width="${largura}" height="16" rx="2"></rect>
+      <text class="grafico-valor" x="${inicioDaBarra + largura + 8}" y="${y + 17}">${t.vencido ? '! ' : ''}${duracao(t.minutos)}</text>`;
+  }).join('');
+  return `
+    <div class="rolagem-grafico">
+      <svg class="grafico" viewBox="0 0 600 ${altura}" width="600" height="${altura}" role="img"
+        aria-label="Tempo corrido de cada envelope, do recebimento ao aviso ao cliente">${linhas}</svg>
+    </div>`;
+}
+
+function desenharPainel(cobrancas) {
+  const cumpridos = cobrancas.filter(prazoCumprido).length;
+  const tempos = cobrancas.filter((c) => c.avisoEm)
+    .map((c) => ({ id: c.id, recebidoEm: c.recebidoEm, minutos: minutosEntre(c.recebidoEm, c.avisoEm), vencido: !prazoCumprido(c) }))
+    .sort((a, b) => (a.recebidoEm < b.recebidoEm ? -1 : 1));
+  const semResposta = cobrancas.filter((c) => c.swift.situacao === 'aguardando').length;
+  const percentual = Math.round((cumpridos / cobrancas.length) * 100);
+  return `
+    <div class="indicadores">
+      <div class="indicador indicador-principal" id="indicador-prazos">
+        <p class="rotulo-secao">Prazos de registro cumpridos</p>
+        <p class="indicador-numero">${cumpridos} de ${cobrancas.length}</p>
+        <p class="legenda">${percentual}% das fichas aprovadas no prazo D0 ou D1</p>
+      </div>
+      <div class="indicador">
+        <p class="rotulo-secao">Tempo mediano do recebimento ao aviso</p>
+        <p class="indicador-numero">${tempos.length ? duracao(mediana(tempos.map((t) => t.minutos))) : '—'}</p>
+        <p class="legenda">${tempos.length} envelopes com aviso registrado</p>
+      </div>
+      <div class="indicador">
+        <p class="rotulo-secao">Mensagens Swift sem resposta</p>
+        <p class="indicador-numero">${semResposta}</p>
+        <p class="legenda">aguardando o banqueiro</p>
+      </div>
+    </div>
+    <div class="cartao bloco-grafico">
+      <h3 class="titulo-bloco">Tempo corrido de cada envelope, do recebimento ao aviso ao cliente</h3>
+      <ul class="legenda-grafico">
+        <li><span class="amostra amostra-barra" aria-hidden="true"></span>prazo de registro cumprido</li>
+        <li><span class="amostra amostra-barra-vencida" aria-hidden="true"></span>! prazo de registro vencido</li>
+      </ul>
+      ${graficoDeTempo(tempos)}
+      <p class="legenda">O tempo corrido inclui a noite quando o envelope chega à tarde e o aviso sai no dia útil seguinte.</p>
+    </div>`;
+}
+
+TELAS.acompanhamento = function desenharAcompanhamento() {
+  if (BR.estado.modulo < 2) {
+    return `
+      <section class="tela-indisponivel" data-tela-indisponivel="acompanhamento">
+        <span class="etiqueta-modulo">Entra no Módulo 2</span>
+        <h1>Acompanhamento de Swift e prazos</h1>
+        <p class="texto-apoio">O Módulo 2 acrescenta a situação de cada mensagem Swift, o prazo D0 ou D1 de cada cobrança, a resposta do banqueiro registrada pelo analista, o resumo diário de pendências e o painel com os prazos cumpridos e o tempo de cada envelope.</p>
+        <button type="button" class="botao botao-principal" data-acao="modulo" data-modulo="2">Mostrar com o Módulo 2</button>
+      </section>`;
+  }
+  const cobrancas = cobrancasAprovadas();
+  return `
+    <section class="tela-acompanhamento" id="acompanhamento">
+      <div class="cabecalho-tela">
+        <div>
+          <p class="rotulo-secao">Módulo 2</p>
+          <h1>Acompanhamento de Swift e prazos</h1>
+          <p class="texto-apoio">Cada ficha aprovada entra no acompanhamento com o banqueiro, o prazo de registro e a situação da mensagem Swift. O analista registra o aviso ao cliente, o envio da mensagem e a resposta do banqueiro.</p>
+        </div>
+      </div>
+      <div class="acomp-grade">
+        <div class="cartao rolagem-tabela">
+          <table class="tabela tabela-acomp" id="tabela-acomp">
+            <thead><tr>
+              <th>Envelope</th><th>Importador</th><th>Banqueiro</th><th>Recebimento</th><th>Prazo de registro</th>
+              <th>Aviso ao cliente</th><th>Mensagem Swift</th><th>Resposta do banqueiro</th>
+            </tr></thead>
+            <tbody>${cobrancas.map(linhaDoAcompanhamento).join('')}</tbody>
+          </table>
+        </div>
+        <aside class="acomp-lateral">
+          <section class="cartao bloco-lateral">
+            <h2 class="titulo-bloco">Registrar a resposta do banqueiro</h2>
+            ${desenharFormulario(cobrancas)}
+          </section>
+          <section class="cartao bloco-lateral">
+            <h2 class="titulo-bloco">Prévia do resumo diário</h2>
+            ${desenharResumoDiario(cobrancas)}
+          </section>
+        </aside>
+      </div>
+      <h2 class="titulo-secao">Painel</h2>
+      ${desenharPainel(cobrancas)}
+    </section>`;
+};
+
+document.addEventListener('submit', (evento) => {
+  if (evento.target.id !== 'form-resposta') return;
+  evento.preventDefault();
+  const dados = new FormData(evento.target);
+  const cobranca = cobrancasAprovadas().find((c) => c.id === dados.get('cobranca'));
+  const observacao = String(dados.get('observacao') || '').trim();
+  cobranca.swift.situacao = 'respondida';
+  cobranca.swift.resposta = { em: agora(), tipo: dados.get('tipo'), observacao };
+  if (cobranca.envelope) {
+    cobranca.envelope.ficha.registro.push({ em: cobranca.swift.resposta.em, texto: `Resposta do banqueiro registrada: ${cobranca.swift.resposta.tipo}` });
+  }
+  desenhar();
+  mostrarAviso(`Resposta de ${cobranca.id} registrada na ficha`);
+});
+
+</script>
+</body>
+</html>
