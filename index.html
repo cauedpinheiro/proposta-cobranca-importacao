@@ -111,7 +111,7 @@ main { max-width: var(--largura); margin: 0 auto; padding: 20px 24px 40px; outli
 .tabela tbody tr:last-child td { border-bottom: 0; }
 .tabela tbody tr[data-acao] { cursor: pointer; }
 .tabela tbody tr[data-acao]:hover, .tabela tbody tr[data-acao]:focus-visible { background: var(--rdm-fundo); }
-.tabela-fila td:first-child { font-weight: 600; color: var(--rdm); }
+.tabela-fila td:first-child { font-weight: 600; color: var(--rdm); white-space: nowrap; }
 .prazo-tag { display: inline-block; font-family: var(--f-mono); font-size: 11px; font-weight: 700; color: var(--rdm);
   border: 1px solid var(--rdm); border-radius: 2px; padding: 0 5px; margin-right: 4px; }
 .nota-ok { color: var(--ok); font-size: 12px; font-weight: 600; white-space: nowrap; }
@@ -122,6 +122,23 @@ main { max-width: var(--largura); margin: 0 auto; padding: 20px 24px 40px; outli
 .sit-lido { background: var(--atencao-f); color: var(--atencao); }
 .sit-divergencia { background: var(--alerta-f); color: var(--alerta); }
 .sit-aprovado { background: var(--ok-f); color: var(--ok); }
+/* Documento faltando: mesma família do alerta, em contorno, para não se confundir com a divergência */
+.sit-faltando { background: var(--branco); color: var(--alerta); box-shadow: inset 0 0 0 1.5px var(--alerta); }
+.nota-falta { display: block; color: var(--alerta); font-size: 12px; font-weight: 600; }
+.celula-documentos { min-width: 170px; max-width: 240px; font-size: 12.5px; }
+.tag-falta { font-size: 10.5px; font-weight: 700; background: var(--alerta-f); color: var(--alerta); padding: 0 5px; border-radius: 2px; }
+.visor-aba-ausente { border-style: dashed; border-color: var(--alerta); }
+.visor-aba[aria-selected="true"] .tag-falta { background: var(--branco); }
+.pagina-ausente { border: 2px dashed var(--alerta); border-radius: 4px; background: var(--branco); padding: 28px 30px; min-height: 240px; color: var(--tinta-2); font-size: 13.5px; }
+.pagina-ausente-titulo { color: var(--alerta); font-weight: 600; font-size: 14.5px; }
+.aviso-alerta { background: var(--alerta-f); border-color: var(--alerta); color: var(--tinta); align-items: flex-start; }
+.aviso-corpo { flex: 1 1 420px; min-width: 0; }
+.aviso-corpo .legenda { max-width: 120ch; }
+.aviso-titulo { font-weight: 600; margin: 0 0 4px !important; }
+.lista-falta { margin: 4px 0 6px; padding-left: 18px; }
+.lista-falta li { margin: 3px 0; }
+.aviso-acoes { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+.pedido-feito { font-size: 13px; font-weight: 600; }
 .vazio, .vazio-celula { color: var(--tinta-3); font-style: italic; }
 .observacao { display: block; font-size: 12px; color: var(--tinta-3); }
 .sinal-ok { color: var(--ok); font-weight: 700; }
@@ -253,6 +270,8 @@ main { max-width: var(--largura); margin: 0 auto; padding: 20px 24px 40px; outli
 .regra-sinal { width: 14px; flex: none; font-weight: 700; }
 .regra-confere .regra-sinal { color: var(--ok); }
 .regra-diverge .regra-sinal { color: var(--alerta); }
+.regra-aguarda { color: var(--tinta-2); }
+.regra-aguarda .regra-sinal { color: var(--alerta); }
 .cartao-divergencia, .cartao-instrucao { background: var(--branco); border: 1px solid var(--traco); border-left: 4px solid var(--alerta);
   border-radius: 4px; padding: 12px 14px; margin: 12px 0; }
 .cartao-instrucao { border-left-color: var(--lilas-escuro); }
@@ -484,15 +503,21 @@ const NOMES_DOS_DOCUMENTOS = {
   dhl: 'Protocolo DHL',
 };
 
-/* Conferências por regra fixa e os campos da ficha que cada uma confere. A divergência de um
-   envelope aponta para uma destas regras. */
+/* Documentos que a área de câmbio exige em todo envelope. Lista ilustrativa: a real é a que o câmbio
+   já usa, definida pelo compliance. */
+const DOCUMENTOS_EXIGIDOS = ['carta', 'fatura', 'invoice', 'conhecimento', 'dhl'];
+
+/* Conferências por regra fixa, os campos da ficha que cada uma confere e os documentos de que ela
+   depende. A divergência de um envelope aponta para uma destas regras. A regra "documentos" confere
+   se o envelope traz os documentos exigidos e as vias que a carta remessa declara. */
 const REGRAS = [
-  { id: 'valor', campos: ['valor', 'moeda'], texto: 'Valor e moeda iguais na carta remessa, na fatura e na invoice' },
-  { id: 'importador', campos: ['importador'], texto: 'Importador igual na carta remessa, na fatura e na invoice' },
-  { id: 'exportador', campos: ['exportador'], texto: 'Exportador igual na carta remessa, na fatura e na invoice' },
-  { id: 'invoice', campos: ['invoice'], texto: 'Número da invoice igual na carta remessa e na invoice' },
-  { id: 'conhecimento', campos: ['conhecimento'], texto: 'Número do conhecimento de embarque igual na invoice, no conhecimento de embarque e no protocolo DHL' },
-  { id: 'referencia', campos: ['referencia'], texto: 'Referência da cobrança igual na carta remessa e no protocolo DHL' },
+  { id: 'documentos', campos: [], docs: [], texto: 'Documentos exigidos e vias declaradas na carta remessa presentes no envelope' },
+  { id: 'valor', campos: ['valor', 'moeda'], docs: ['carta', 'fatura', 'invoice'], texto: 'Valor e moeda iguais na carta remessa, na fatura e na invoice' },
+  { id: 'importador', campos: ['importador'], docs: ['carta', 'fatura', 'invoice'], texto: 'Importador igual na carta remessa, na fatura e na invoice' },
+  { id: 'exportador', campos: ['exportador'], docs: ['carta', 'fatura', 'invoice'], texto: 'Exportador igual na carta remessa, na fatura e na invoice' },
+  { id: 'invoice', campos: ['invoice'], docs: ['carta', 'invoice'], texto: 'Número da invoice igual na carta remessa e na invoice' },
+  { id: 'conhecimento', campos: ['conhecimento'], docs: ['invoice', 'conhecimento', 'dhl'], texto: 'Número do conhecimento de embarque igual na invoice, no conhecimento de embarque e no protocolo DHL' },
+  { id: 'referencia', campos: ['referencia'], docs: ['carta', 'dhl'], texto: 'Referência da cobrança igual na carta remessa e no protocolo DHL' },
 ];
 
 const TIPOS_DE_RESPOSTA = [
@@ -502,7 +527,7 @@ const TIPOS_DE_RESPOSTA = [
   'Outra resposta',
 ];
 
-/* Os seis envelopes da fila de hoje. "documentos" traz o que está impresso nos papéis, em inglês,
+/* Os sete envelopes da fila de hoje. "documentos" traz o que está impresso nos papéis, em inglês,
    como chega do banqueiro do exterior; a ficha mostra os mesmos valores no formato brasileiro. */
 const ENVELOPES = [
   {
@@ -603,6 +628,26 @@ const ENVELOPES = [
     divergencias: [],
     // O envelope físico chegou depois da cópia digital e foi digitalizado na mesma pasta
     envelopeDigitalizado: { chegouEm: '2026-11-19T10:20', arquivos: 5 },
+  },
+  {
+    id: 'ENV-0107', recebidoEm: '2026-11-19T09:40', prazo: 'D0', origem: 'digitalizado', situacao: 'faltando',
+    documentos: {
+      referencia: 'BETA-IC-26-2010', banqueiro: 'Banco Exemplo Beta', importador: 'Distribuidora Modelo Ltda.',
+      exportador: 'Sample Manufacturing Inc.', moeda: 'USD', valor: 36000, invoice: 'SM-2026-0350', dataInvoice: '2026-11-03',
+      fatura: 'FT-2026-0700', conhecimento: 'EXBL-2026-7700', dataEmbarque: '2026-11-07', portoEmbarque: 'Sample Harbor',
+      portoDestino: 'Santos', protocolo: '1000 2000 90', item: 'Hydraulic pumps, series H-10', quantidade: 120,
+      instrucao: 'Documents to be released against payment only. All charges for account of the drawee.',
+    },
+    variantes: {},
+    interpretacao: { entrega: 'contra pagamento', despesas: 'por conta do importador' },
+    divergencias: [],
+    // O que falta no envelope digitalizado: um documento exigido inteiro e uma via declarada na carta remessa
+    faltando: [
+      { doc: 'fatura', texto: 'a fatura',
+        motivo: 'A fatura está na lista de documentos exigidos e na carta remessa, que declara a fatura FT-2026-0700, mas não está entre os arquivos do envelope.' },
+      { doc: 'conhecimento', via: true, declaradas: 3, recebidas: 2, texto: '1 original do conhecimento de embarque',
+        motivo: 'A carta remessa declara o jogo completo de 3 originais do conhecimento de embarque, e o envelope traz 2.' },
+    ],
   },
 ];
 
@@ -745,17 +790,26 @@ function valoresLidos(envelope) {
   };
 }
 
+/* Documento que não veio inteiro: os campos que saem dele ficam vazios até ele chegar. Via que falta
+   não esvazia campo, porque a via que chegou já traz os dados. */
+const docAusente = (envelope, doc) => documentosFaltando(envelope).some((f) => f.doc === doc && !f.via);
+
 function criarFicha(envelope) {
   const lidos = valoresLidos(envelope);
   const aprovado = envelope.situacao === 'aprovado';
+  const pendentes = (envelope.faltando || []).map((f) => ({ ...f, pedidoEm: null, chegouEm: null }));
+  const ausentes = pendentes.filter((f) => !f.via).map((f) => f.doc);
   const campos = {};
-  Object.entries(lidos).forEach(([campo, valor]) => { campos[campo] = { valor, lido: valor }; });
+  Object.entries(lidos).forEach(([campo, valor]) => {
+    campos[campo] = { valor: ausentes.includes(ORIGEM_DOS_CAMPOS[campo].doc) ? '' : valor, lido: valor };
+  });
   const divergencias = {};
   envelope.divergencias.forEach((div) => { divergencias[div.id] = { resolvida: aprovado, valor: null }; });
   const registro = [{ em: envelope.recebidoEm, texto: envelope.origem === 'antecipada' ? 'Cópia digital antecipada salva na pasta' : 'Envelope digitalizado salvo na pasta' }];
   if (envelope.situacao !== 'novo') registro.push({ em: paraIso(new Date(paraData(envelope.recebidoEm).getTime() + 2 * 60000)), texto: 'Leitura e conferência concluídas' });
   if (aprovado) registro.push({ em: envelope.aprovadoEm, texto: 'Ficha aprovada pelo analista de câmbio' });
-  return { campos, divergencias, instrucaoConfirmada: aprovado, entrega: envelope.interpretacao.entrega, vinculado: false, registro };
+  if (pendentes.length) registro.push({ em: paraIso(new Date(paraData(envelope.recebidoEm).getTime() + 2 * 60000)), texto: `Documento faltando no envelope: ${pendentes.map((f) => f.texto).join(' e ')}` });
+  return { campos, divergencias, pendentes, instrucaoConfirmada: aprovado, entrega: envelope.interpretacao.entrega, vinculado: false, registro };
 }
 
 function iniciarDados() {
@@ -771,9 +825,14 @@ function iniciarDados() {
 const envelopePorId = (id) => BR.envelopes.find((e) => e.id === id);
 const envelopeAberto = () => envelopePorId(BR.estado.envelopeId);
 const divergenciasAbertas = (envelope) => envelope.divergencias.filter((d) => !envelope.ficha.divergencias[d.id].resolvida);
+const documentosFaltando = (envelope) => (envelope.ficha ? envelope.ficha.pendentes.filter((f) => !f.chegouEm) : []);
+
+/* "a fatura e 1 original do conhecimento de embarque" */
+const listaDoQueFalta = (faltam) => faltam.map((f) => f.texto).join(' e ');
 
 function pendenciasDaAprovacao(envelope) {
   const pendencias = [];
+  documentosFaltando(envelope).forEach((f) => pendencias.push(`Falta ${f.texto}`));
   const abertas = divergenciasAbertas(envelope).length;
   if (abertas) pendencias.push(abertas === 1 ? '1 divergência aberta' : `${abertas} divergências abertas`);
   if (!envelope.ficha.instrucaoConfirmada) pendencias.push('Instrução da carta remessa a confirmar');
@@ -796,13 +855,16 @@ const SITUACOES = {
   novo: { texto: 'Novo', classe: 'sit-novo', sinal: '○' },
   lido: { texto: 'Lido, a revisar', classe: 'sit-lido', sinal: '●' },
   divergencia: { texto: 'Com divergência', classe: 'sit-divergencia', sinal: '!' },
+  faltando: { texto: 'Documento faltando', classe: 'sit-faltando', sinal: '!' },
   aprovado: { texto: 'Aprovado', classe: 'sit-aprovado', sinal: '✓' },
 };
 
 function seloSituacao(envelope) {
   const s = SITUACOES[envelope.situacao];
-  const abertas = envelope.situacao === 'divergencia' ? ` (${divergenciasAbertas(envelope).length})` : '';
-  return `<span class="situacao ${s.classe}"><span class="situacao-sinal" aria-hidden="true">${s.sinal}</span>${s.texto}${abertas}</span>`;
+  let quantos = '';
+  if (envelope.situacao === 'divergencia') quantos = ` (${divergenciasAbertas(envelope).length})`;
+  if (envelope.situacao === 'faltando') quantos = ` (${documentosFaltando(envelope).length})`;
+  return `<span class="situacao ${s.classe}"><span class="situacao-sinal" aria-hidden="true">${s.sinal}</span>${s.texto}${quantos}</span>`;
 }
 
 function textoPrazo(cobranca) {
@@ -918,8 +980,18 @@ const FILTROS_DA_FILA = [
   { id: 'novo', texto: 'Novas' },
   { id: 'lido', texto: 'Lidas' },
   { id: 'divergencia', texto: 'Com divergência' },
+  { id: 'faltando', texto: 'Documento faltando' },
   { id: 'aprovado', texto: 'Aprovadas' },
 ];
+
+/* Os documentos exigidos que o envelope trouxe, ou o que falta nele. */
+function celulaDocumentos(envelope) {
+  if (envelope.situacao === 'novo') return '<span class="vazio-celula">em leitura</span>';
+  const faltam = documentosFaltando(envelope);
+  if (!faltam.length) return `<span class="nota-ok">✓ ${DOCUMENTOS_EXIGIDOS.length} de ${DOCUMENTOS_EXIGIDOS.length}</span>`;
+  const pedido = faltam.every((f) => f.pedidoEm) ? `<span class="observacao">pedido ao banqueiro em ${dataHora(faltam[0].pedidoEm)}</span>` : '';
+  return `<span class="nota-falta">! falta ${listaDoQueFalta(faltam)}</span>${pedido}`;
+}
 
 function textoOrigem(envelope) {
   if (envelope.origem !== 'antecipada') return 'Envelope digitalizado';
@@ -949,6 +1021,7 @@ function linhaDaFila(envelope) {
       <td>${esc(d.importador)}</td>
       <td class="numero">${d.moeda} ${valorBR(d.valor)}</td>
       <td class="celula-origem">${textoOrigem(envelope)}</td>
+      <td class="celula-documentos">${celulaDocumentos(envelope)}</td>
       <td>${seloSituacao(envelope)}</td>
     </tr>`;
 }
@@ -980,11 +1053,12 @@ TELAS.fila = function desenharFila() {
         <table class="tabela tabela-fila">
           <thead><tr>
             <th>Envelope</th><th>Recebimento</th><th>Prazo de registro</th><th>Banqueiro remetente</th>
-            <th>Importador</th><th>Valor</th><th>Origem</th><th>Situação</th>
+            <th>Importador</th><th>Valor</th><th>Origem</th><th>Documentos</th><th>Situação</th>
           </tr></thead>
-          <tbody>${visiveis.map(linhaDaFila).join('') || '<tr><td colspan="8" class="vazio">Nenhum envelope nesta situação.</td></tr>'}</tbody>
+          <tbody>${visiveis.map(linhaDaFila).join('') || '<tr><td colspan="9" class="vazio">Nenhum envelope nesta situação.</td></tr>'}</tbody>
         </table>
       </div>
+      <p class="legenda">Documentos: a solução confere se o envelope traz os documentos exigidos (carta remessa, fatura, invoice, conhecimento de embarque e protocolo DHL) e as vias que a carta remessa declara. As situações da fila são exemplos e são definidas com a área de câmbio de acordo com a ação que cada uma pede.</p>
       <p class="legenda">Prazo D0: registro no dia do recebimento. Prazo D1: registro no dia útil seguinte, e por isso o D1 de 19/11 cai em 23/11, depois do feriado nacional de 20/11.</p>
     </section>`;
 };
@@ -1076,18 +1150,25 @@ function documentosDoEnvelope(envelope) {
     ${linhaDoc('We certify this invoice to be true and correct.')}
     <div class="doc-assinatura">Authorized signature</div>`;
 
-  const conhecimento = `
-    <div class="doc-topo"><span class="doc-emissor">EXAMPLE SHIPPING LINE</span><span>Original 1/3</span></div>
+  /* Um original por página. Só o primeiro leva os trechos de origem, para o realce cair num lugar só. */
+  const conhecimento = (n, total) => {
+    const t = (id, texto) => (n === 1 ? trecho(id, texto) : esc(texto));
+    return `
+    <div class="doc-topo"><span class="doc-emissor">EXAMPLE SHIPPING LINE</span><span>Original ${n}/${total}</span></div>
     <h4 class="doc-titulo">Bill of lading</h4>
-    ${linhaDoc(`B/L No.: ${trecho('bl-numero', v('conhecimento', 'conhecimento'))}`)}
+    ${linhaDoc(`B/L No.: ${t('bl-numero', v('conhecimento', 'conhecimento'))}`)}
     ${linhaDoc(`Shipper: ${esc(d.exportador)}`)}
     ${linhaDoc(`Consignee: To order of ${esc(d.banqueiro)}`)}
     ${linhaDoc(`Notify party: ${esc(d.importador)}`)}
     ${linhaDoc('Vessel: MV Example Star · Voyage 26E')}
-    ${linhaDoc(`Port of loading: ${trecho('bl-porto-embarque', d.portoEmbarque)}`)}
-    ${linhaDoc(`Port of discharge: ${trecho('bl-porto-destino', d.portoDestino)}, Brazil`)}
-    ${linhaDoc(`Shipped on board: ${trecho('bl-data', dataEmIngles(d.dataEmbarque))}`)}
+    ${linhaDoc(`Port of loading: ${t('bl-porto-embarque', d.portoEmbarque)}`)}
+    ${linhaDoc(`Port of discharge: ${t('bl-porto-destino', d.portoDestino)}, Brazil`)}
+    ${linhaDoc(`Shipped on board: ${t('bl-data', dataEmIngles(d.dataEmbarque))}`)}
     ${linhaDoc(`Description of goods: ${d.quantidade} units, ${esc(d.item)}`)}`;
+  };
+  const viaQueFalta = documentosFaltando(envelope).find((f) => f.doc === 'conhecimento' && f.via);
+  const originais = viaQueFalta ? viaQueFalta.recebidas : 3;
+  const paginasDoConhecimento = Array.from({ length: originais }, (_, i) => ({ imagem: false, html: conhecimento(i + 1, 3) }));
 
   const dhl = `
     <div class="doc-topo"><span class="doc-emissor">DHL EXPRESS</span><span>Waybill ${trecho('dhl-numero', d.protocolo)}</span></div>
@@ -1099,13 +1180,15 @@ function documentosDoEnvelope(envelope) {
     ${linhaDoc(`Received on: ${trecho('dhl-recebimento', dataLonga(envelope.recebidoEm))} ${envelope.recebidoEm.slice(11, 16)}`)}
     <div class="doc-rubrica">Recebido · Câmbio</div>`;
 
-  return [
+  const documentos = [
     { id: 'carta', paginas: [{ imagem: false, html: carta }] },
     { id: 'fatura', paginas: [{ imagem: false, html: fatura }] },
     { id: 'invoice', paginas: [{ imagem: false, html: invoice1 }, { imagem: false, html: invoice2 }] },
-    { id: 'conhecimento', paginas: [{ imagem: false, html: conhecimento }] },
+    { id: 'conhecimento', paginas: paginasDoConhecimento, faltaVia: viaQueFalta },
     { id: 'dhl', paginas: [{ imagem: true, html: dhl }] },
   ];
+  // Documento exigido que não veio: a aba continua no visor, sem páginas, para o analista ver o que falta
+  return documentos.map((doc) => (docAusente(envelope, doc.id) ? { id: doc.id, ausente: true, paginas: [] } : doc));
 }
 
 /* A linha do documento em que o trecho aparece, com o trecho marcado. Serve aos dois lados de uma divergência. */
@@ -1130,7 +1213,8 @@ function textoDaOrigemAtiva() {
   const { campoAtivo, trechoAtivo, documento, paginaAtiva } = BR.estado;
   if (campoAtivo) {
     const origem = ORIGEM_DOS_CAMPOS[campoAtivo];
-    return `<span class="origem-rotulo">Origem do campo</span> <strong>${ROTULOS[campoAtivo]}</strong>: ${NOMES_DOS_DOCUMENTOS[origem.doc]}, p. ${origem.pagina}`;
+    const onde = docAusente(envelopeAberto(), origem.doc) ? 'o documento não veio no envelope' : `p. ${origem.pagina}`;
+    return `<span class="origem-rotulo">Origem do campo</span> <strong>${ROTULOS[campoAtivo]}</strong>: ${NOMES_DOS_DOCUMENTOS[origem.doc]}, ${onde}`;
   }
   if (trechoAtivo) return `<span class="origem-rotulo">Trecho realçado</span> ${NOMES_DOS_DOCUMENTOS[documento]}, p. ${paginaAtiva}`;
   return '<span class="origem-rotulo">Origem</span> Clique num campo da ficha para realçar o trecho do documento de onde ele saiu.';
@@ -1139,10 +1223,26 @@ function textoDaOrigemAtiva() {
 function desenharVisor(envelope) {
   const documentos = documentosDoEnvelope(envelope);
   const atual = documentos.find((doc) => doc.id === BR.estado.documento) || documentos[0];
-  const abas = documentos.map((doc) => `
-    <button type="button" class="visor-aba" role="tab" data-acao="ver-documento" data-doc="${doc.id}" aria-selected="${doc.id === atual.id}">
-      ${NOMES_DOS_DOCUMENTOS[doc.id]} <span class="visor-aba-paginas">${doc.paginas.length} p.</span>${doc.paginas.some((p) => p.imagem) ? ' <span class="tag-ocr">OCR</span>' : ''}
-    </button>`).join('');
+  const abas = documentos.map((doc) => {
+    let detalhe = `<span class="visor-aba-paginas">${doc.paginas.length} p.</span>${doc.paginas.some((p) => p.imagem) ? ' <span class="tag-ocr">OCR</span>' : ''}`;
+    if (doc.ausente) detalhe = '<span class="tag-falta">não veio</span>';
+    else if (doc.faltaVia) detalhe += ` <span class="tag-falta">${doc.faltaVia.recebidas} de ${doc.faltaVia.declaradas} originais</span>`;
+    return `
+    <button type="button" class="visor-aba${doc.ausente ? ' visor-aba-ausente' : ''}" role="tab" data-acao="ver-documento" data-doc="${doc.id}" aria-selected="${doc.id === atual.id}">
+      ${NOMES_DOS_DOCUMENTOS[doc.id]} ${detalhe}
+    </button>`;
+  }).join('');
+  if (atual.ausente) {
+    return `
+    <div class="visor-abas" role="tablist" aria-label="Documentos do envelope">${abas}</div>
+    <p class="visor-origem" id="visor-origem">${textoDaOrigemAtiva()}</p>
+    <div class="visor-paginas" id="visor-paginas">
+      <div class="pagina-ausente">
+        <p class="pagina-ausente-titulo">${NOMES_DOS_DOCUMENTOS[atual.id]}: documento exigido e não encontrado no envelope</p>
+        <p>Nenhum arquivo do envelope digitalizado foi reconhecido como ${NOMES_DOS_DOCUMENTOS[atual.id].toLowerCase()}. Os campos que saem deste documento ficam vazios na ficha até ele chegar.</p>
+      </div>
+    </div>`;
+  }
   const paginas = atual.paginas.map((pagina, indice) => `
     <article class="pagina${pagina.imagem ? ' pagina-imagem' : ''}" data-pagina="${indice + 1}">
       <header class="pagina-rotulo">
@@ -1197,11 +1297,18 @@ function verOrigem(campo, levarAoVisor = false) {
 // ---------------------------------------------------------------------------
 function atualizarSituacao(envelope) {
   if (envelope.situacao === 'aprovado' || envelope.situacao === 'novo') return;
-  envelope.situacao = divergenciasAbertas(envelope).length ? 'divergencia' : 'lido';
+  if (documentosFaltando(envelope).length) envelope.situacao = 'faltando';
+  else envelope.situacao = divergenciasAbertas(envelope).length ? 'divergencia' : 'lido';
+}
+
+/* "a fatura" quando a regra depende de documento que não veio; vazio quando ela pode rodar. */
+function documentosQueARegraAguarda(envelope, regra) {
+  return listaDoQueFalta(documentosFaltando(envelope).filter((f) => !f.via && regra.docs.includes(f.doc)));
 }
 
 function marcaDoCampo(envelope, campo) {
   const { ficha } = envelope;
+  if (docAusente(envelope, ORIGEM_DOS_CAMPOS[campo].doc)) return '<span class="marca marca-alerta">! falta o documento</span>';
   const divergencia = envelope.divergencias.find((div) => div.campo === campo);
   if (divergencia && !ficha.divergencias[divergencia.id].resolvida) return '<span class="marca marca-alerta">! divergência</span>';
   if (campo === 'condicao') {
@@ -1209,7 +1316,10 @@ function marcaDoCampo(envelope, campo) {
   }
   if (ficha.campos[campo].valor !== ficha.campos[campo].lido) return '<span class="marca marca-analista">corrigido pelo analista</span>';
   if (divergencia) return '<span class="marca marca-ok">✓ divergência resolvida</span>';
-  if (REGRAS.some((regra) => regra.campos.includes(campo))) return '<span class="marca marca-regra">✓ conferido por regra fixa</span>';
+  const regra = REGRAS.find((r) => r.campos.includes(campo));
+  const espera = regra ? documentosQueARegraAguarda(envelope, regra) : '';
+  if (espera) return `<span class="marca marca-lido">lido · aguarda ${espera}</span>`;
+  if (regra) return '<span class="marca marca-regra">✓ conferido por regra fixa</span>';
   return '<span class="marca marca-lido">lido</span>';
 }
 
@@ -1324,11 +1434,20 @@ function cartaoInstrucao(envelope) {
 
 function desenharDivergencias(envelope) {
   const regrasQueDivergiram = new Set(envelope.divergencias.map((div) => div.regra));
+  const faltam = documentosFaltando(envelope);
+  if (faltam.length) regrasQueDivergiram.add('documentos');
+  let esperando = 0;
   const lista = REGRAS.map((regra) => {
     const diverge = regrasQueDivergiram.has(regra.id);
+    const espera = documentosQueARegraAguarda(envelope, regra);
+    if (!diverge && espera) {
+      esperando += 1;
+      return `<li class="regra-aguarda"><span class="regra-sinal" aria-hidden="true">…</span>${regra.texto} · aguarda ${espera}</li>`;
+    }
     return `<li class="${diverge ? 'regra-diverge' : 'regra-confere'}"><span class="regra-sinal" aria-hidden="true">${diverge ? '!' : '✓'}</span>${regra.texto}</li>`;
   }).join('');
-  const confere = REGRAS.length - regrasQueDivergiram.size;
+  const confere = REGRAS.length - regrasQueDivergiram.size - esperando;
+  const resumo = `${confere} conferiram, ${regrasQueDivergiram.size} divergiram na leitura${esperando ? ` e ${esperando} aguardam o documento que falta` : ''}`;
   const proximo = envelope.situacao === 'aprovado'
     ? ''
     : '<div class="linha-acao"><button type="button" class="botao botao-principal" data-acao="passo" data-passo="aprovacao">Seguir para a aprovação</button></div>';
@@ -1338,7 +1457,7 @@ function desenharDivergencias(envelope) {
       <p class="etiqueta-ilustrativa">Regras e divergências ilustrativas; as regras reais saem do mapa de cobertura dos documentos.</p>
     </div>
     <details class="regras" ${regrasQueDivergiram.size ? '' : 'open'}>
-      <summary>${REGRAS.length} conferências por regra fixa: ${confere} conferiram e ${regrasQueDivergiram.size} divergiram na leitura</summary>
+      <summary>${REGRAS.length} conferências por regra fixa: ${resumo}</summary>
       <ul class="lista-regras">${lista}</ul>
     </details>
     ${envelope.divergencias.map((div) => cartaoDivergencia(envelope, div)).join('')}
@@ -1357,7 +1476,7 @@ function desenharAprovacao(envelope) {
   const pendencias = pendenciasDaAprovacao(envelope);
   const situacao = pendencias.length
     ? `<ul class="pendencias">${pendencias.map((p) => `<li><span class="sinal-alerta" aria-hidden="true">!</span> ${p}</li>`).join('')}</ul>
-       <p class="legenda" id="motivo-bloqueio">A aprovação fica bloqueada enquanto houver pendência.</p>`
+       <p class="legenda" id="motivo-bloqueio">A aprovação fica bloqueada enquanto houver pendência.${documentosFaltando(envelope).length ? ' Se a cobrança pode ser registrada antes de o documento que falta chegar é decisão da área de câmbio, combinada no início do projeto.' : ''}</p>`
     : '<p class="sem-pendencia"><span class="sinal-ok" aria-hidden="true">✓</span> Nenhuma pendência: a ficha pode ser aprovada.</p>';
   return `
     <div class="painel-topo"><h2>Aprovar a ficha</h2></div>
@@ -1520,6 +1639,31 @@ function avisosDoEnvelope(envelope) {
         <button type="button" class="botao botao-secundario" data-acao="simular-leitura">Simular o fim da leitura</button>
       </div>`);
   }
+  const { pendentes } = envelope.ficha;
+  const faltam = documentosFaltando(envelope);
+  if (faltam.length) {
+    const pedidoEm = faltam.every((f) => f.pedidoEm) ? faltam[0].pedidoEm : null;
+    const acoes = pedidoEm
+      ? `<p class="pedido-feito"><span class="sinal-ok" aria-hidden="true">✓</span> Pedido ao banqueiro registrado em ${dataHora(pedidoEm)}</p>
+         <button type="button" class="botao botao-secundario" data-acao="simular-chegada">Simular a chegada dos documentos</button>`
+      : '<button type="button" class="botao botao-secundario" data-acao="pedir-documento">Registrar o pedido ao banqueiro</button>';
+    avisos.push(`
+      <div class="aviso aviso-alerta" id="aviso-falta">
+        <div class="aviso-corpo">
+          <p class="aviso-titulo"><span class="sinal-alerta" aria-hidden="true">!</span> Faltam documentos neste envelope</p>
+          <ul class="lista-falta">${faltam.map((f) => `
+            <li><strong>${NOMES_DOS_DOCUMENTOS[f.doc]} · ${f.via ? `${f.recebidas} de ${f.declaradas} originais` : 'não veio'}.</strong> ${esc(f.motivo)}</li>`).join('')}
+          </ul>
+          <p class="legenda">O analista pede ao banqueiro remetente o que falta, e a ficha fica nesta situação até o documento chegar. Como o alerta chega ao analista, só nesta tela ou também por e-mail, é definido com a área de câmbio. A contagem de vias vale quando cada via é digitalizada.</p>
+        </div>
+        <div class="aviso-acoes">${acoes}</div>
+      </div>`);
+  } else if (pendentes.length) {
+    avisos.push(`
+      <div class="aviso aviso-ok" id="aviso-falta">
+        <p><span class="sinal-ok" aria-hidden="true">✓</span> Os documentos que faltavam (${listaDoQueFalta(pendentes)}) chegaram em ${dataHora(pendentes[0].chegouEm)}, foram salvos na pasta e lidos, e a ficha seguiu para a revisão.</p>
+      </div>`);
+  }
   if (envelope.origem === 'antecipada') {
     const chegada = envelope.envelopeDigitalizado;
     avisos.push(envelope.ficha.vinculado
@@ -1667,6 +1811,33 @@ ACOES['simular-leitura'] = () => {
   definir({ passo: 'campos' });
 };
 
+ACOES['pedir-documento'] = () => {
+  const envelope = envelopeAberto();
+  const em = agora();
+  const faltam = documentosFaltando(envelope);
+  faltam.forEach((f) => { f.pedidoEm = em; });
+  envelope.ficha.registro.push({ em, texto: `Pedido ao banqueiro remetente registrado pelo analista: ${listaDoQueFalta(faltam)}` });
+  desenhar();
+};
+
+/* Demonstração: o documento que faltava é salvo na pasta, a solução o lê e os campos dele entram na ficha. */
+ACOES['simular-chegada'] = () => {
+  const envelope = envelopeAberto();
+  const em = agora();
+  const faltam = documentosFaltando(envelope);
+  faltam.forEach((f) => {
+    f.chegouEm = em;
+    if (f.via) return;
+    Object.keys(ORIGEM_DOS_CAMPOS).filter((c) => ORIGEM_DOS_CAMPOS[c].doc === f.doc).forEach((c) => {
+      const campo = envelope.ficha.campos[c];
+      if (!campo.valor) campo.valor = campo.lido;
+    });
+  });
+  envelope.ficha.registro.push({ em, texto: `Documentos que faltavam salvos na pasta e lidos: ${listaDoQueFalta(faltam)}` });
+  atualizarSituacao(envelope);
+  definir({ passo: 'campos', campoAtivo: null, trechoAtivo: null });
+};
+
 ACOES['registrar-aviso'] = () => {
   const envelope = envelopeAberto();
   envelope.avisoEm = agora();
@@ -1775,6 +1946,7 @@ function desenharResumoDiario(cobrancas) {
   const ids = (lista) => lista.map((c) => c.id);
   const vencemHoje = naFila.filter((e) => limiteDoPrazo(e) === HOJE);
   const comDivergencia = naFila.filter((e) => e.situacao === 'divergencia');
+  const faltando = naFila.filter((e) => e.situacao === 'faltando');
   const aRevisar = naFila.filter((e) => e.situacao === 'lido' || e.situacao === 'novo');
   const avisos = cobrancas.filter((c) => !c.avisoEm);
   const aEnviar = cobrancas.filter((c) => c.swift.situacao === 'a-enviar');
@@ -1786,6 +1958,7 @@ function desenharResumoDiario(cobrancas) {
       <ul>
         ${itemDoResumo(vencemHoje.length, '1 ficha com prazo de registro vencendo hoje', '{n} fichas com prazo de registro vencendo hoje', ids(vencemHoje))}
         ${itemDoResumo(comDivergencia.length, '1 ficha com divergência aberta', '{n} fichas com divergência aberta', ids(comDivergencia))}
+        ${itemDoResumo(faltando.length, '1 ficha à espera de documento do banqueiro', '{n} fichas à espera de documento do banqueiro', ids(faltando))}
         ${itemDoResumo(aRevisar.length, '1 ficha aguardando a revisão do analista', '{n} fichas aguardando a revisão do analista', ids(aRevisar))}
         ${itemDoResumo(avisos.length, '1 aviso ao cliente a registrar', '{n} avisos ao cliente a registrar', ids(avisos))}
         ${itemDoResumo(aEnviar.length, '1 mensagem Swift a enviar', '{n} mensagens Swift a enviar', ids(aEnviar))}
